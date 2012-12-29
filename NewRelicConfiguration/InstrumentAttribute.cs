@@ -11,5 +11,21 @@ namespace NewRelicConfiguration
     {
         public string MetricName { get; set; }
         public string Metric { get; set; }
+
+        public InstrumentAttribute()
+        {
+
+        }
+
+        public InstrumentAttribute(string metricName)
+        {
+            this.MetricName = metricName;
+        }
+
+        public InstrumentAttribute(string metricName, string metric)
+        {
+            this.MetricName = metricName;
+            this.Metric = metric;
+        }
     }
 }

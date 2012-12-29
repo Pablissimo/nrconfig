@@ -9,15 +9,26 @@ namespace NewRelicConfigManager.Configuration
 {
     public class InstrumentationTarget
     {
+        public bool IsMethod { get { return this.Method != null; } }
+        public bool IsConstructor { get { return this.Constructor != null; } }
+
         public MethodInfo Method { get; private set; }
+        public ConstructorInfo Constructor { get; private set; }
         public string MetricName { get; private set; }
         public string Metric { get; private set; }
 
         public InstrumentationTarget(MethodInfo method, string metricName, string metric)
         {
             this.Method = method;
-            this.Metric = metric;
             this.MetricName = metricName;
+            this.Metric = metric;
+        }
+
+        public InstrumentationTarget(ConstructorInfo constructor, string metricName, string metric)
+        {
+            this.Constructor = constructor;
+            this.MetricName = metricName;
+            this.Metric = metric;
         }
     }
 }

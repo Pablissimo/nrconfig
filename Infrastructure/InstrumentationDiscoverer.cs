@@ -35,26 +35,55 @@ namespace NewRelicConfigManager.Infrastructure
         {
             List<InstrumentationTarget> toReturn = new List<InstrumentationTarget>();
 
+            HashSet<MethodBase> alreadyAdded = new HashSet<MethodBase>();
+
             // Does the type have an Instrument attribute?
             var typeLevelAttribute = t.GetCustomAttribute(_instAttributeType) as InstrumentAttribute;
-            if (typeLevelAttribute == null)
+            typeLevelAttribute = GetEffectiveInstrumentationContext(typeLevelAttribute, context);
+            
+            // Instrument everything in this type, irrespective of its member-level
+            // details
+            foreach (MethodInfo methodInfo in t.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly))
             {
-                typeLevelAttribute = context;
+                var attr = GetEffectiveInstrumentationContext(methodInfo.GetCustomAttribute(_instAttributeType) as InstrumentAttribute, typeLevelAttribute);
+                if (attr != null && alreadyAdded.Add(methodInfo))
+                {
+                    toReturn.Add(GetInstrumentationTarget(methodInfo, attr));
+                }
             }
 
-            if (typeLevelAttribute != null)
+            foreach (PropertyInfo propertyInfo in t.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly))
             {
-                // Instrument everything in this type, irrespective of its member-level
-                // details
-                foreach (MethodInfo methodInfo in t.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance))
+                var getMethod = propertyInfo.GetGetMethod(true);
+                var setMethod = propertyInfo.GetSetMethod(true);
+
+                var propLevelAttribute = propertyInfo.GetCustomAttribute(_instAttributeType) as InstrumentAttribute;
+
+                if (getMethod != null)
                 {
-                    toReturn.Add(GetInstrumentationTarget(methodInfo, typeLevelAttribute));
+                    var getMethodAttr = GetEffectiveInstrumentationContext(propLevelAttribute, getMethod.GetCustomAttribute(_instAttributeType) as InstrumentAttribute, typeLevelAttribute);
+                    if (getMethodAttr != null && alreadyAdded.Add(getMethod))
+                    {
+                        toReturn.Add(GetInstrumentationTarget(getMethod, getMethodAttr));
+                    }
                 }
 
-                foreach (PropertyInfo propertyInfo in t.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance))
+                if (setMethod != null)
                 {
-                    toReturn.Add(GetInstrumentationTarget(propertyInfo.GetGetMethod(true), typeLevelAttribute));
-                    toReturn.Add(GetInstrumentationTarget(propertyInfo.GetSetMethod(true), typeLevelAttribute));
+                    var setMethodAttr = GetEffectiveInstrumentationContext(propLevelAttribute, setMethod.GetCustomAttribute(_instAttributeType) as InstrumentAttribute, typeLevelAttribute);
+                    if (setMethodAttr != null && alreadyAdded.Add(setMethod))
+                    {
+                        toReturn.Add(GetInstrumentationTarget(setMethod, setMethodAttr));
+                    }
+                }
+            }
+
+            foreach (ConstructorInfo constructorInfo in t.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly))
+            {
+                var attr = GetEffectiveInstrumentationContext(constructorInfo.GetCustomAttribute(_instAttributeType) as InstrumentAttribute, typeLevelAttribute);
+                if (attr != null && alreadyAdded.Add(constructorInfo))
+                {
+                    toReturn.Add(GetInstrumentationTarget(constructorInfo, attr));
                 }
             }
 
@@ -73,6 +102,49 @@ namespace NewRelicConfigManager.Infrastructure
         private static InstrumentationTarget GetInstrumentationTarget(MethodInfo methodInfo, InstrumentAttribute context)
         {
             return new InstrumentationTarget(methodInfo, context.MetricName, context.Metric);
+        }
+
+        private static InstrumentationTarget GetInstrumentationTarget(ConstructorInfo ctorInfo, InstrumentAttribute context)
+        {
+            return new InstrumentationTarget(ctorInfo, context.MetricName, context.Metric);
+        }
+
+        private static InstrumentAttribute GetEffectiveInstrumentationContext(params InstrumentAttribute[] attrs)
+        {
+            // Working through the array, assuming that the top-most items are the most important
+            InstrumentAttribute toReturn = new InstrumentAttribute();
+            bool setMetricName = false, setMetric = false;
+            
+            foreach (var attr in attrs)
+            {
+                if (attr == null)
+                {
+                    continue;
+                }
+                else if (setMetricName && setMetric)
+                {
+                    break;
+                }
+
+                if (attr.MetricName != null && !setMetricName)
+                {
+                    toReturn.MetricName = attr.MetricName;
+                    setMetricName = true;
+                }
+
+                if (attr.Metric != null && !setMetric)
+                {
+                    toReturn.Metric = attr.Metric;
+                    setMetric = true;
+                }
+            }
+
+            if (attrs == null || !attrs.Any(x => x != null))
+            {
+                toReturn = null;
+            }
+
+            return toReturn;
         }
     }
 }
