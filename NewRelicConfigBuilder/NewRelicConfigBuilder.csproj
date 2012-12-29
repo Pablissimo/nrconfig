@@ -62,6 +62,10 @@
       <Project>{c93b069a-da84-4fcb-bd39-fc1a59cdd03b}</Project>
       <Name>NewRelicConfigManager</Name>
     </ProjectReference>
+    <ProjectReference Include="..\NewRelicConfigManager.Test\NewRelicConfigManager.Test.csproj">
+      <Project>{2456f28a-8f2a-4d34-87d3-f824aec976a6}</Project>
+      <Name>NewRelicConfigManager.Test</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NewRelicConfiguration\NewRelicConfiguration.csproj">
       <Project>{33536e8a-988a-4c6f-97cc-b708c8de2978}</Project>
       <Name>NewRelicConfiguration</Name>

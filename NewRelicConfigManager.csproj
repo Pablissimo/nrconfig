@@ -43,6 +43,7 @@
     <Compile Include="Infrastructure\InstrumentationDiscoverer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rendering\ExactMethodMatcher.cs" />
+    <Compile Include="Rendering\Extension.cs" />
     <Compile Include="Rendering\Instrumentation.cs" />
     <Compile Include="Rendering\Match.cs" />
     <Compile Include="Rendering\Renderer.cs" />

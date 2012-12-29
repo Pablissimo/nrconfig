@@ -1,16 +1,19 @@
 ﻿using NewRelicConfigManager.Configuration;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace NewRelicConfigManager.Rendering
 {
     public class Renderer
     {
-        public Instrumentation Render(IEnumerable<InstrumentationTarget> targets)
+        public Extension Render(IEnumerable<InstrumentationTarget> targets)
         {
             Instrumentation toReturn = new Instrumentation();
 
@@ -24,7 +27,8 @@ namespace NewRelicConfigManager.Rendering
                 var byMetric = groupedByMetricName.GroupBy(x => x.Metric ?? string.Empty);
                 foreach (var groupedByMetric in byMetric.OrderBy(x => x.Key))
                 {
-                    var byType = groupedByMetric.GroupBy(x => x.Method.DeclaringType);
+                    Func<InstrumentationTarget, Type> typeGetter = x => x.IsConstructor ? x.Constructor.DeclaringType : x.Method.DeclaringType;
+                    var byType = groupedByMetric.GroupBy(x => typeGetter(x));
                     foreach (var groupedByType in byType)
                     {
                         Match match = GetMatchFromType(groupedByType.Key, groupedByMetric.Key);
@@ -35,23 +39,36 @@ namespace NewRelicConfigManager.Rendering
                             ExactMethodMatcher methodMatcher = GetMatcherFromTarget(toInstrument);
                             match.Matches.Add(methodMatcher);
                         }
+
+                        tracerFactory.MatchDefinitions.Add(match);
                     }
                 }
 
                 toReturn.TracerFactories.Add(tracerFactory);
             }
 
-            return toReturn;
+            return new Extension() { Instrumentation = toReturn };
+        }
+
+        public void RenderToStream(IEnumerable<InstrumentationTarget> targets, Stream stream)
+        {
+            Extension rootElement = Render(targets);
+
+            XmlSerializer serializer = new XmlSerializer(typeof(Extension));
+            serializer.Serialize(stream, targets);
         }
 
         private ExactMethodMatcher GetMatcherFromTarget(InstrumentationTarget target)
         {
-            return new ExactMethodMatcher(target.Method.Name, (target.Method.GetParameters() ?? Enumerable.Empty<ParameterInfo>()).Select(x => x.ParameterType.FullName).ToArray());
+            string methodName = target.IsConstructor ? target.Constructor.Name : target.Method.Name;
+            ParameterInfo[] parameters = target.IsConstructor ? target.Constructor.GetParameters() : target.Method.GetParameters();
+
+            return new ExactMethodMatcher(methodName, (parameters ?? Enumerable.Empty<ParameterInfo>()).Select(x => x.ParameterType.FullName).ToArray());
         }
 
         private Match GetMatchFromType(Type t, string metric)
         {
-            var assy = t.Assembly.FullName;
+            var assy = t.Assembly.GetName().Name;
             var className = t.ToString();
 
             return new Match(metric, assy, className);

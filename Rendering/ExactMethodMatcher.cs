@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace NewRelicConfigManager.Rendering
 {
     public class ExactMethodMatcher
     {
+        [XmlAttribute(AttributeName="methodName")]
         public string MethodName { get; set; }
+        [XmlAttribute(AttributeName="parameters")]
         public string ParameterTypes { get; set; }
 
         public ExactMethodMatcher()
