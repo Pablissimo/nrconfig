@@ -108,11 +108,11 @@ namespace NewRelicConfigManager.Infrastructure
                     var getMethod = propertyInfo.GetGetMethod(true);
                     var setMethod = propertyInfo.GetSetMethod(true);
 
-                    if (getMethod.ContainsGenericParameters)
+                    if (getMethod != null && getMethod.ContainsGenericParameters)
                     {
                         getMethod = null;
                     }
-                    if (setMethod.ContainsGenericParameters)
+                    if (setMethod != null && setMethod.ContainsGenericParameters)
                     {
                         setMethod = null;
                     }

@@ -63,7 +63,7 @@ namespace NewRelicConfigManager.Rendering
             string methodName = target.IsConstructor ? target.Constructor.Name : target.Method.Name;
             ParameterInfo[] parameters = target.IsConstructor ? target.Constructor.GetParameters() : target.Method.GetParameters();
 
-            string[] parameterTypeNames = (parameters ?? Enumerable.Empty<ParameterInfo>()).Select(x => x.ParameterType.FullName).ToArray();
+            string[] parameterTypeNames = (parameters ?? Enumerable.Empty<ParameterInfo>()).Select(x => GetFriendlyTypeName(x.ParameterType)).ToArray();
 
             if (parameters == null || !parameters.Any())
             {
@@ -71,6 +71,24 @@ namespace NewRelicConfigManager.Rendering
             }
 
             return new ExactMethodMatcher(methodName, parameterTypeNames.ToArray());
+        }
+
+        private static string GetFriendlyTypeName(Type t)
+        {
+            if (!t.IsGenericType)
+            {
+                return t.FullName;
+            }
+            else
+            {
+                // Generics when asked for their full-name do crazy things like:
+                // System.Nullable`1[[System.Decimal, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]
+                // Which isn't much use to us. However, we can fiddle this...
+                const string FORMAT = "{0}.{1}[{2}]";
+                string[] innerTypes = t.GenericTypeArguments.Select(x => string.Format("[{0}]", GetFriendlyTypeName(x))).ToArray();
+
+                return string.Format(FORMAT, t.Namespace, t.Name, string.Join(",", innerTypes));
+            }
         }
 
         private Match GetMatchFromType(Type t, string metric)

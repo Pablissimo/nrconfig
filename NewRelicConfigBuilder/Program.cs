@@ -113,7 +113,13 @@ namespace NewRelicConfigBuilder
                         }
                     }
 
-                    targets.AddRange(InstrumentationDiscoverer.GetInstrumentationSet(assy, assemblyAttribute));
+                    var toAdd = InstrumentationDiscoverer.GetInstrumentationSet(assy, assemblyAttribute);
+                    if (args.Verbose)
+                    {
+                        Console.WriteLine("Processed {0} targets from {1}", toAdd.Count(), assy.FullName);
+                    }
+
+                    targets.AddRange(toAdd);
                 }
 
                 string tempPath = Path.GetTempFileName();
