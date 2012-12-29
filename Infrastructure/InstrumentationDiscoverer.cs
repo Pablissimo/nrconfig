@@ -13,6 +13,18 @@ namespace NewRelicConfigManager.Infrastructure
     {
         private static Type _instAttributeType = typeof(InstrumentAttribute);
 
+        public static IEnumerable<InstrumentationTarget> GetInstrumentationSet(IEnumerable<Assembly> assemblies)
+        {
+            List<InstrumentationTarget> toReturn = new List<InstrumentationTarget>();
+
+            foreach (Assembly assy in assemblies)
+            {
+                toReturn.AddRange(GetInstrumentationSet(assy));
+            }
+
+            return toReturn;
+        }
+
         public static IEnumerable<InstrumentationTarget> GetInstrumentationSet(Assembly assy)
         {
             List<InstrumentationTarget> toReturn = new List<InstrumentationTarget>();

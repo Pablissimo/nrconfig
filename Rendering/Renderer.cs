@@ -55,7 +55,7 @@ namespace NewRelicConfigManager.Rendering
             Extension rootElement = Render(targets);
 
             XmlSerializer serializer = new XmlSerializer(typeof(Extension));
-            serializer.Serialize(stream, targets);
+            serializer.Serialize(stream, rootElement);
         }
 
         private ExactMethodMatcher GetMatcherFromTarget(InstrumentationTarget target)
