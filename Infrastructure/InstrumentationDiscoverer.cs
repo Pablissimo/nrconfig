@@ -27,12 +27,17 @@ namespace NewRelicConfigManager.Infrastructure
 
         public static IEnumerable<InstrumentationTarget> GetInstrumentationSet(Assembly assy)
         {
+            return GetInstrumentationSet(assy, null);
+        }
+
+        public static IEnumerable<InstrumentationTarget> GetInstrumentationSet(Assembly assy, InstrumentAttribute context)
+        {
             List<InstrumentationTarget> toReturn = new List<InstrumentationTarget>();
 
             var allTypes = assy.GetTypes();
             foreach (Type t in allTypes.Where(x => x.IsClass))
             {
-                toReturn.AddRange(GetInstrumentationSet(t));
+                toReturn.AddRange(GetInstrumentationSet(t, context));
             }
 
             return toReturn;
@@ -52,10 +57,42 @@ namespace NewRelicConfigManager.Infrastructure
             // Does the type have an Instrument attribute?
             var typeLevelAttribute = t.GetCustomAttribute(_instAttributeType) as InstrumentAttribute;
             typeLevelAttribute = GetEffectiveInstrumentationContext(typeLevelAttribute, context);
-            
+
+            var baseBindingFlags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
+            var propBindingFlags = baseBindingFlags;
+            var methodBindingFlags = baseBindingFlags;
+            var ctorBindingFlags = baseBindingFlags;
+
+            if ((typeLevelAttribute.Scopes & InstrumentationScopes.PublicProperties) == InstrumentationScopes.PublicProperties)
+            {
+                propBindingFlags |= BindingFlags.Public;
+            }
+            if ((typeLevelAttribute.Scopes & InstrumentationScopes.NonPublicProperties) == InstrumentationScopes.NonPublicProperties)
+            {
+                propBindingFlags |= BindingFlags.NonPublic;
+            }
+
+            if ((typeLevelAttribute.Scopes & InstrumentationScopes.PublicMethods) == InstrumentationScopes.PublicMethods)
+            {
+                methodBindingFlags |= BindingFlags.Public;
+            }
+            if ((typeLevelAttribute.Scopes & InstrumentationScopes.NonPublicMethods) == InstrumentationScopes.NonPublicMethods)
+            {
+                methodBindingFlags |= BindingFlags.NonPublic;
+            }
+
+            if ((typeLevelAttribute.Scopes & InstrumentationScopes.PublicConstructors) == InstrumentationScopes.PublicConstructors)
+            {
+                ctorBindingFlags |= BindingFlags.Public;
+            }
+            if ((typeLevelAttribute.Scopes & InstrumentationScopes.NonPublicConstructors) == InstrumentationScopes.NonPublicConstructors)
+            {
+                ctorBindingFlags |= BindingFlags.NonPublic;
+            }
+
             // Instrument everything in this type, irrespective of its member-level
             // details
-            foreach (MethodInfo methodInfo in t.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly))
+            foreach (MethodInfo methodInfo in t.GetMethods(methodBindingFlags))
             {
                 var attr = GetEffectiveInstrumentationContext(methodInfo.GetCustomAttribute(_instAttributeType) as InstrumentAttribute, typeLevelAttribute);
                 if (attr != null && alreadyAdded.Add(methodInfo))
@@ -64,7 +101,7 @@ namespace NewRelicConfigManager.Infrastructure
                 }
             }
 
-            foreach (PropertyInfo propertyInfo in t.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly))
+            foreach (PropertyInfo propertyInfo in t.GetProperties(propBindingFlags))
             {
                 var getMethod = propertyInfo.GetGetMethod(true);
                 var setMethod = propertyInfo.GetSetMethod(true);
@@ -90,7 +127,7 @@ namespace NewRelicConfigManager.Infrastructure
                 }
             }
 
-            foreach (ConstructorInfo constructorInfo in t.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly))
+            foreach (ConstructorInfo constructorInfo in t.GetConstructors(ctorBindingFlags))
             {
                 var attr = GetEffectiveInstrumentationContext(constructorInfo.GetCustomAttribute(_instAttributeType) as InstrumentAttribute, typeLevelAttribute);
                 if (attr != null && alreadyAdded.Add(constructorInfo))
@@ -125,7 +162,7 @@ namespace NewRelicConfigManager.Infrastructure
         {
             // Working through the array, assuming that the top-most items are the most important
             InstrumentAttribute toReturn = new InstrumentAttribute();
-            bool setMetricName = false, setMetric = false;
+            bool setMetricName = false, setMetric = false, setScopes = false;
             
             foreach (var attr in attrs)
             {
@@ -148,6 +185,12 @@ namespace NewRelicConfigManager.Infrastructure
                 {
                     toReturn.Metric = attr.Metric;
                     setMetric = true;
+                }
+
+                if (!setScopes)
+                {
+                    toReturn.Scopes = attr.Scopes;
+                    setScopes = true;
                 }
             }
 

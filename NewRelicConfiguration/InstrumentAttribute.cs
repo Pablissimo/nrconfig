@@ -11,10 +11,11 @@ namespace NewRelicConfiguration
     {
         public string MetricName { get; set; }
         public string Metric { get; set; }
+        public InstrumentationScopes Scopes { get; set; }
 
         public InstrumentAttribute()
         {
-
+            this.Scopes = InstrumentationScopes.All;
         }
 
         public InstrumentAttribute(string metricName)
