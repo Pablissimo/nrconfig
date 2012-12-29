@@ -2,6 +2,7 @@
 using NewRelicConfigManager.Configuration;
 using NewRelicConfigManager.Infrastructure;
 using NewRelicConfigManager.Test.TestClasses;
+using NewRelicConfiguration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace NewRelicConfigManager.Test.Infrastructure
 
             Assert.IsNotNull(ofInterest);
             Assert.AreEqual("Method-level override name", ofInterest.MetricName);
-            Assert.AreEqual("Metric", ofInterest.Metric);
+            Assert.AreEqual(Metric.Scoped, ofInterest.Metric);
         }
 
         [TestMethod]
@@ -34,7 +35,7 @@ namespace NewRelicConfigManager.Test.Infrastructure
 
             Assert.IsNotNull(ofInterest);
             Assert.AreEqual("Metric name", ofInterest.MetricName);
-            Assert.AreEqual("Method-level override metric", ofInterest.Metric);
+            Assert.AreEqual(Metric.Both, ofInterest.Metric);
         }
 
         [TestMethod]
@@ -46,7 +47,7 @@ namespace NewRelicConfigManager.Test.Infrastructure
 
             Assert.IsNotNull(ofInterest);
             Assert.AreEqual("Method-level override name", ofInterest.MetricName);
-            Assert.AreEqual("Method-level override metric", ofInterest.Metric);
+            Assert.AreEqual(Metric.None, ofInterest.Metric);
         }
 
         [TestMethod]
@@ -58,7 +59,7 @@ namespace NewRelicConfigManager.Test.Infrastructure
 
             Assert.IsNotNull(ofInterest);
             Assert.AreEqual("Override class-level metric name", ofInterest.MetricName);
-            Assert.AreEqual("Metric", ofInterest.Metric);
+            Assert.AreEqual(Metric.Scoped, ofInterest.Metric);
         }
 
         [TestMethod]

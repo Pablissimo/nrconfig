@@ -17,18 +17,18 @@ namespace NewRelicConfiguration.Test
         [TestMethod]
         public void Constructor_InitialisesProperties_MetricNameAndMetric()
         {
-            var attr = new InstrumentAttribute("Test Metric Name", "Test Metric");
+            var attr = new InstrumentAttribute("Test Metric Name", Metric.Scoped);
 
-            Assert.AreEqual("Test Metric", attr.Metric);
+            Assert.AreEqual(Metric.Scoped, attr.Metric);
             Assert.AreEqual("Test Metric Name", attr.MetricName);
         }
 
         [TestMethod]
         public void PropertiesTest()
         {
-            var attr = new InstrumentAttribute() { Metric = "Test Metric", MetricName = "Test Metric Name" };
+            var attr = new InstrumentAttribute() { Metric = Metric.Scoped, MetricName = "Test Metric Name" };
 
-            Assert.AreEqual("Test Metric", attr.Metric);
+            Assert.AreEqual(Metric.Scoped, attr.Metric);
             Assert.AreEqual("Test Metric Name", attr.MetricName);
         }
     }

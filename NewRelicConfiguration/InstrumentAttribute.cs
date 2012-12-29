@@ -10,21 +10,25 @@ namespace NewRelicConfiguration
     public class InstrumentAttribute : Attribute
     {
         public string MetricName { get; set; }
-        public string Metric { get; set; }
+        public Metric Metric { get; set; }
         public InstrumentationScopes Scopes { get; set; }
 
         public InstrumentAttribute()
+            : this(null)
         {
             this.Scopes = InstrumentationScopes.All;
         }
 
         public InstrumentAttribute(string metricName)
+            : this(metricName, Metric.Unspecified)
         {
             this.MetricName = metricName;
         }
 
-        public InstrumentAttribute(string metricName, string metric)
+        public InstrumentAttribute(string metricName, Metric metric)
         {
+            this.Scopes = InstrumentationScopes.All;
+
             this.MetricName = metricName;
             this.Metric = metric;
         }

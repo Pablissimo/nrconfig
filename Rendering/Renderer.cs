@@ -1,4 +1,5 @@
 ﻿using NewRelicConfigManager.Configuration;
+using NewRelicConfiguration;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,17 +22,23 @@ namespace NewRelicConfigManager.Rendering
             var byMetricName = targets.GroupBy(x => x.MetricName ?? string.Empty);
             foreach (var groupedByMetricName in byMetricName.OrderBy(x => x.Key))
             {
-                TracerFactory tracerFactory = new TracerFactory(groupedByMetricName.Key);
-
                 // Then group by metric
-                var byMetric = groupedByMetricName.GroupBy(x => x.Metric ?? string.Empty);
+                var byMetric = groupedByMetricName.GroupBy(x => x.Metric);
                 foreach (var groupedByMetric in byMetric.OrderBy(x => x.Key))
                 {
+                    string metricName = groupedByMetricName.Key;
+                    if (metricName == string.Empty)
+                    {
+                        metricName = null;
+                    }
+
+                    TracerFactory tracerFactory = new TracerFactory(metricName, groupedByMetric.Key);
+
                     Func<InstrumentationTarget, Type> typeGetter = x => x.IsConstructor ? x.Constructor.DeclaringType : x.Method.DeclaringType;
                     var byType = groupedByMetric.GroupBy(x => typeGetter(x));
                     foreach (var groupedByType in byType)
                     {
-                        Match match = GetMatchFromType(groupedByType.Key, groupedByMetric.Key);
+                        Match match = GetMatchFromType(groupedByType.Key);
 
                         // Each item in the groupedByType enumerable is a method to be instrumented
                         foreach (var toInstrument in groupedByType)
@@ -42,9 +49,9 @@ namespace NewRelicConfigManager.Rendering
 
                         tracerFactory.MatchDefinitions.Add(match);
                     }
-                }
 
-                toReturn.TracerFactories.Add(tracerFactory);
+                    toReturn.TracerFactories.Add(tracerFactory);
+                }
             }
 
             return new Extension() { Instrumentation = toReturn };
@@ -75,6 +82,8 @@ namespace NewRelicConfigManager.Rendering
 
         private static string GetFriendlyTypeName(Type t)
         {
+            return t.FullName;
+
             if (!t.IsGenericType)
             {
                 return t.FullName;
@@ -91,12 +100,12 @@ namespace NewRelicConfigManager.Rendering
             }
         }
 
-        private Match GetMatchFromType(Type t, string metric)
+        private Match GetMatchFromType(Type t)
         {
             var assy = t.Assembly.GetName().Name;
             var className = t.ToString();
 
-            return new Match(metric, assy, className);
+            return new Match(assy, className);
         }
     }
 }

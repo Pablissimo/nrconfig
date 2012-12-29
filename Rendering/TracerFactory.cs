@@ -1,5 +1,7 @@
-﻿using System;
+﻿using NewRelicConfiguration;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +13,9 @@ namespace NewRelicConfigManager.Rendering
     {
         [XmlAttribute(AttributeName="metricName")]
         public string MetricName { get; set; }
+        [XmlAttribute(AttributeName="metric")]
+        [DefaultValue(Metric.Unspecified)]
+        public Metric Metric { get; set; }
         [XmlElement(ElementName="match")]
         public List<Match> MatchDefinitions { get; set; }
 
@@ -19,10 +24,11 @@ namespace NewRelicConfigManager.Rendering
             this.MatchDefinitions = new List<Match>();
         }
 
-        public TracerFactory(string metricName)
+        public TracerFactory(string metricName, Metric metric)
             : this()
         {
             this.MetricName = metricName;
+            this.Metric = metric;
         }
     }
 }

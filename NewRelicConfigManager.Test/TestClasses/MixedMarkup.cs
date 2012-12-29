@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace NewRelicConfigManager.Test.TestClasses
 {
-    [Instrument("Metric name", "Metric")]
+    [Instrument("Metric name", Metric.Scoped)]
     public class MixedMarkup
     {
         [Instrument("Method-level override name")]
@@ -16,13 +16,13 @@ namespace NewRelicConfigManager.Test.TestClasses
 
         }
 
-        [Instrument(Metric = "Method-level override metric")]
+        [Instrument(Metric = Metric.Both)]
         public void TestMethodDifferentMetricInheritedMetricName()
         {
 
         }
 
-        [Instrument("Method-level override name", "Method-level override metric")]
+        [Instrument("Method-level override name", Metric.None)]
         public void TestMethodDifferentMetricAndMetricName()
         {
 

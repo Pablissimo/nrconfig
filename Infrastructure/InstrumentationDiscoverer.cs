@@ -65,31 +65,40 @@ namespace NewRelicConfigManager.Infrastructure
                 var methodBindingFlags = baseBindingFlags;
                 var ctorBindingFlags = baseBindingFlags;
 
-                if ((typeLevelAttribute.Scopes & InstrumentationScopes.PublicProperties) == InstrumentationScopes.PublicProperties)
+                if (typeLevelAttribute == null)
                 {
-                    propBindingFlags |= BindingFlags.Public;
+                    propBindingFlags |= BindingFlags.NonPublic | BindingFlags.Public;
+                    methodBindingFlags |= BindingFlags.NonPublic | BindingFlags.Public;
+                    ctorBindingFlags |= BindingFlags.NonPublic | BindingFlags.Public;
                 }
-                if ((typeLevelAttribute.Scopes & InstrumentationScopes.NonPublicProperties) == InstrumentationScopes.NonPublicProperties)
+                else
                 {
-                    propBindingFlags |= BindingFlags.NonPublic;
-                }
+                    if ((typeLevelAttribute.Scopes & InstrumentationScopes.PublicProperties) == InstrumentationScopes.PublicProperties)
+                    {
+                        propBindingFlags |= BindingFlags.Public;
+                    }
+                    if ((typeLevelAttribute.Scopes & InstrumentationScopes.NonPublicProperties) == InstrumentationScopes.NonPublicProperties)
+                    {
+                        propBindingFlags |= BindingFlags.NonPublic;
+                    }
 
-                if ((typeLevelAttribute.Scopes & InstrumentationScopes.PublicMethods) == InstrumentationScopes.PublicMethods)
-                {
-                    methodBindingFlags |= BindingFlags.Public;
-                }
-                if ((typeLevelAttribute.Scopes & InstrumentationScopes.NonPublicMethods) == InstrumentationScopes.NonPublicMethods)
-                {
-                    methodBindingFlags |= BindingFlags.NonPublic;
-                }
+                    if ((typeLevelAttribute.Scopes & InstrumentationScopes.PublicMethods) == InstrumentationScopes.PublicMethods)
+                    {
+                        methodBindingFlags |= BindingFlags.Public;
+                    }
+                    if ((typeLevelAttribute.Scopes & InstrumentationScopes.NonPublicMethods) == InstrumentationScopes.NonPublicMethods)
+                    {
+                        methodBindingFlags |= BindingFlags.NonPublic;
+                    }
 
-                if ((typeLevelAttribute.Scopes & InstrumentationScopes.PublicConstructors) == InstrumentationScopes.PublicConstructors)
-                {
-                    ctorBindingFlags |= BindingFlags.Public;
-                }
-                if ((typeLevelAttribute.Scopes & InstrumentationScopes.NonPublicConstructors) == InstrumentationScopes.NonPublicConstructors)
-                {
-                    ctorBindingFlags |= BindingFlags.NonPublic;
+                    if ((typeLevelAttribute.Scopes & InstrumentationScopes.PublicConstructors) == InstrumentationScopes.PublicConstructors)
+                    {
+                        ctorBindingFlags |= BindingFlags.Public;
+                    }
+                    if ((typeLevelAttribute.Scopes & InstrumentationScopes.NonPublicConstructors) == InstrumentationScopes.NonPublicConstructors)
+                    {
+                        ctorBindingFlags |= BindingFlags.NonPublic;
+                    }
                 }
 
                 // Instrument everything in this type, irrespective of its member-level
@@ -193,7 +202,7 @@ namespace NewRelicConfigManager.Infrastructure
                     setMetricName = true;
                 }
 
-                if (attr.Metric != null && !setMetric)
+                if (attr.Metric != Metric.Unspecified && !setMetric)
                 {
                     toReturn.Metric = attr.Metric;
                     setMetric = true;

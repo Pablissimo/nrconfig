@@ -9,14 +9,12 @@ namespace NewRelicConfigManager.Rendering
 {
     public class Match
     {
-        [XmlAttribute(AttributeName="metric")]
-        public string Metric { get; set; }
         [XmlAttribute(AttributeName="assemblyName")]
         public string AssemblyName { get; set; }
         [XmlAttribute(AttributeName = "className")]
         public string ClassName { get; set; }
 
-        [XmlElement(ElementName="match")]
+        [XmlElement(ElementName="exactMethodMatcher")]
         public List<ExactMethodMatcher> Matches { get; set; }
 
         public Match()
@@ -24,10 +22,9 @@ namespace NewRelicConfigManager.Rendering
             this.Matches = new List<ExactMethodMatcher>();
         }
 
-        public Match(string metric, string assemblyName, string className)
+        public Match(string assemblyName, string className)
             : this()
         {
-            this.Metric = metric;
             this.AssemblyName = assemblyName;
             this.ClassName = className;
         }
