@@ -52,96 +52,108 @@ namespace NewRelicConfigManager.Infrastructure
         {
             List<InstrumentationTarget> toReturn = new List<InstrumentationTarget>();
 
-            HashSet<MethodBase> alreadyAdded = new HashSet<MethodBase>();
+            if (!t.IsGenericTypeDefinition)
+            {
+                HashSet<MethodBase> alreadyAdded = new HashSet<MethodBase>();
 
-            // Does the type have an Instrument attribute?
-            var typeLevelAttribute = t.GetCustomAttribute(_instAttributeType) as InstrumentAttribute;
-            typeLevelAttribute = GetEffectiveInstrumentationContext(typeLevelAttribute, context);
+                // Does the type have an Instrument attribute?
+                var typeLevelAttribute = t.GetCustomAttribute(_instAttributeType) as InstrumentAttribute;
+                typeLevelAttribute = GetEffectiveInstrumentationContext(typeLevelAttribute, context);
 
-            var baseBindingFlags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
-            var propBindingFlags = baseBindingFlags;
-            var methodBindingFlags = baseBindingFlags;
-            var ctorBindingFlags = baseBindingFlags;
+                var baseBindingFlags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
+                var propBindingFlags = baseBindingFlags;
+                var methodBindingFlags = baseBindingFlags;
+                var ctorBindingFlags = baseBindingFlags;
 
-            if ((typeLevelAttribute.Scopes & InstrumentationScopes.PublicProperties) == InstrumentationScopes.PublicProperties)
-            {
-                propBindingFlags |= BindingFlags.Public;
-            }
-            if ((typeLevelAttribute.Scopes & InstrumentationScopes.NonPublicProperties) == InstrumentationScopes.NonPublicProperties)
-            {
-                propBindingFlags |= BindingFlags.NonPublic;
-            }
-
-            if ((typeLevelAttribute.Scopes & InstrumentationScopes.PublicMethods) == InstrumentationScopes.PublicMethods)
-            {
-                methodBindingFlags |= BindingFlags.Public;
-            }
-            if ((typeLevelAttribute.Scopes & InstrumentationScopes.NonPublicMethods) == InstrumentationScopes.NonPublicMethods)
-            {
-                methodBindingFlags |= BindingFlags.NonPublic;
-            }
-
-            if ((typeLevelAttribute.Scopes & InstrumentationScopes.PublicConstructors) == InstrumentationScopes.PublicConstructors)
-            {
-                ctorBindingFlags |= BindingFlags.Public;
-            }
-            if ((typeLevelAttribute.Scopes & InstrumentationScopes.NonPublicConstructors) == InstrumentationScopes.NonPublicConstructors)
-            {
-                ctorBindingFlags |= BindingFlags.NonPublic;
-            }
-
-            // Instrument everything in this type, irrespective of its member-level
-            // details
-            foreach (MethodInfo methodInfo in t.GetMethods(methodBindingFlags))
-            {
-                var attr = GetEffectiveInstrumentationContext(methodInfo.GetCustomAttribute(_instAttributeType) as InstrumentAttribute, typeLevelAttribute);
-                if (attr != null && alreadyAdded.Add(methodInfo))
+                if ((typeLevelAttribute.Scopes & InstrumentationScopes.PublicProperties) == InstrumentationScopes.PublicProperties)
                 {
-                    toReturn.Add(GetInstrumentationTarget(methodInfo, attr));
+                    propBindingFlags |= BindingFlags.Public;
                 }
-            }
-
-            foreach (PropertyInfo propertyInfo in t.GetProperties(propBindingFlags))
-            {
-                var getMethod = propertyInfo.GetGetMethod(true);
-                var setMethod = propertyInfo.GetSetMethod(true);
-
-                var propLevelAttribute = propertyInfo.GetCustomAttribute(_instAttributeType) as InstrumentAttribute;
-
-                if (getMethod != null)
+                if ((typeLevelAttribute.Scopes & InstrumentationScopes.NonPublicProperties) == InstrumentationScopes.NonPublicProperties)
                 {
-                    var getMethodAttr = GetEffectiveInstrumentationContext(propLevelAttribute, getMethod.GetCustomAttribute(_instAttributeType) as InstrumentAttribute, typeLevelAttribute);
-                    if (getMethodAttr != null && alreadyAdded.Add(getMethod))
+                    propBindingFlags |= BindingFlags.NonPublic;
+                }
+
+                if ((typeLevelAttribute.Scopes & InstrumentationScopes.PublicMethods) == InstrumentationScopes.PublicMethods)
+                {
+                    methodBindingFlags |= BindingFlags.Public;
+                }
+                if ((typeLevelAttribute.Scopes & InstrumentationScopes.NonPublicMethods) == InstrumentationScopes.NonPublicMethods)
+                {
+                    methodBindingFlags |= BindingFlags.NonPublic;
+                }
+
+                if ((typeLevelAttribute.Scopes & InstrumentationScopes.PublicConstructors) == InstrumentationScopes.PublicConstructors)
+                {
+                    ctorBindingFlags |= BindingFlags.Public;
+                }
+                if ((typeLevelAttribute.Scopes & InstrumentationScopes.NonPublicConstructors) == InstrumentationScopes.NonPublicConstructors)
+                {
+                    ctorBindingFlags |= BindingFlags.NonPublic;
+                }
+
+                // Instrument everything in this type, irrespective of its member-level
+                // details
+                foreach (MethodInfo methodInfo in t.GetMethods(methodBindingFlags).Where(x => !x.ContainsGenericParameters))
+                {
+                    var attr = GetEffectiveInstrumentationContext(methodInfo.GetCustomAttribute(_instAttributeType) as InstrumentAttribute, typeLevelAttribute);
+                    if (attr != null && alreadyAdded.Add(methodInfo))
                     {
-                        toReturn.Add(GetInstrumentationTarget(getMethod, getMethodAttr));
+                        toReturn.Add(GetInstrumentationTarget(methodInfo, attr));
                     }
                 }
 
-                if (setMethod != null)
+                foreach (PropertyInfo propertyInfo in t.GetProperties(propBindingFlags))
                 {
-                    var setMethodAttr = GetEffectiveInstrumentationContext(propLevelAttribute, setMethod.GetCustomAttribute(_instAttributeType) as InstrumentAttribute, typeLevelAttribute);
-                    if (setMethodAttr != null && alreadyAdded.Add(setMethod))
+                    var getMethod = propertyInfo.GetGetMethod(true);
+                    var setMethod = propertyInfo.GetSetMethod(true);
+
+                    if (getMethod.ContainsGenericParameters)
                     {
-                        toReturn.Add(GetInstrumentationTarget(setMethod, setMethodAttr));
+                        getMethod = null;
+                    }
+                    if (setMethod.ContainsGenericParameters)
+                    {
+                        setMethod = null;
+                    }
+
+                    var propLevelAttribute = propertyInfo.GetCustomAttribute(_instAttributeType) as InstrumentAttribute;
+
+                    if (getMethod != null)
+                    {
+                        var getMethodAttr = GetEffectiveInstrumentationContext(propLevelAttribute, getMethod.GetCustomAttribute(_instAttributeType) as InstrumentAttribute, typeLevelAttribute);
+                        if (getMethodAttr != null && alreadyAdded.Add(getMethod))
+                        {
+                            toReturn.Add(GetInstrumentationTarget(getMethod, getMethodAttr));
+                        }
+                    }
+
+                    if (setMethod != null)
+                    {
+                        var setMethodAttr = GetEffectiveInstrumentationContext(propLevelAttribute, setMethod.GetCustomAttribute(_instAttributeType) as InstrumentAttribute, typeLevelAttribute);
+                        if (setMethodAttr != null && alreadyAdded.Add(setMethod))
+                        {
+                            toReturn.Add(GetInstrumentationTarget(setMethod, setMethodAttr));
+                        }
                     }
                 }
-            }
 
-            foreach (ConstructorInfo constructorInfo in t.GetConstructors(ctorBindingFlags))
-            {
-                var attr = GetEffectiveInstrumentationContext(constructorInfo.GetCustomAttribute(_instAttributeType) as InstrumentAttribute, typeLevelAttribute);
-                if (attr != null && alreadyAdded.Add(constructorInfo))
+                foreach (ConstructorInfo constructorInfo in t.GetConstructors(ctorBindingFlags).Where(x => !x.ContainsGenericParameters))
                 {
-                    toReturn.Add(GetInstrumentationTarget(constructorInfo, attr));
+                    var attr = GetEffectiveInstrumentationContext(constructorInfo.GetCustomAttribute(_instAttributeType) as InstrumentAttribute, typeLevelAttribute);
+                    if (attr != null && alreadyAdded.Add(constructorInfo))
+                    {
+                        toReturn.Add(GetInstrumentationTarget(constructorInfo, attr));
+                    }
                 }
-            }
 
-            var nested = t.GetNestedTypes(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-            if (nested != null && nested.Any())
-            {
-                foreach (var nestedType in nested)
+                var nested = t.GetNestedTypes(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static).Where(x => !x.IsGenericTypeDefinition);
+                if (nested != null && nested.Any())
                 {
-                    toReturn.AddRange(GetInstrumentationSet(nestedType, typeLevelAttribute));
+                    foreach (var nestedType in nested)
+                    {
+                        toReturn.AddRange(GetInstrumentationSet(nestedType, typeLevelAttribute));
+                    }
                 }
             }
 

@@ -63,7 +63,14 @@ namespace NewRelicConfigManager.Rendering
             string methodName = target.IsConstructor ? target.Constructor.Name : target.Method.Name;
             ParameterInfo[] parameters = target.IsConstructor ? target.Constructor.GetParameters() : target.Method.GetParameters();
 
-            return new ExactMethodMatcher(methodName, (parameters ?? Enumerable.Empty<ParameterInfo>()).Select(x => x.ParameterType.FullName).ToArray());
+            string[] parameterTypeNames = (parameters ?? Enumerable.Empty<ParameterInfo>()).Select(x => x.ParameterType.FullName).ToArray();
+
+            if (parameters == null || !parameters.Any())
+            {
+                parameterTypeNames = new[]{ "void" };
+            }
+
+            return new ExactMethodMatcher(methodName, parameterTypeNames.ToArray());
         }
 
         private Match GetMatchFromType(Type t, string metric)
