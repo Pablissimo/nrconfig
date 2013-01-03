@@ -37,6 +37,30 @@
 
 <p><strong>Note</strong> I'm not affiliated with New Relic, Inc beyond being a happy customer of theirs and this tool is in no way endorsed by them. If there're issues with the tool or questions about the source, come to me and not their (lovely) support team as they'll not know what you're talking about.</p>
 
+<h2>Quickstart from NuGet</h2>
+
+<p>Minimally, grab the NRConfig.Tool NuGet package:</p>
+
+<pre><code>PM&gt; install-package NRConfig.Tool
+</code></pre>
+
+<p>This will make the nrconfig.exe command available to your post-build steps for all projects in your solution. Next step's up to you - if you want fine-grained control of which methods get instrumented, also grab the NRConfig.Library NuGet package for each project you want to instrument:</p>
+
+<pre><code>PM&gt; install-package NRConfig.Library
+</code></pre>
+
+<p>Then mark up your classes or methods with [NRConfig.Instrument] attributes before adding a post-build step for your project:</p>
+
+<pre><code>nrconfig.exe /i $(TargetPath) /o $(TargetDir)$(TargetName).NewRelic.xml
+</code></pre>
+
+<h3>Don't need fine-grained control?</h3>
+
+<p>If you don't need method-level specifity, you can use the /f flag in the post-build step (flags are described below):</p>
+
+<pre><code>nrconfig.exe /i $(TargetPath) /f all /o $(TargetDir)$(TargetName).NewRelic.xml
+</code></pre>
+
 <h2>Usage</h2>
 
 <h3>Mark up your methods for fine-grained control</h3>
@@ -44,13 +68,14 @@
 <p>If you want to instrument specific methods or all of the methods within specific classes then the best approach is to mark them up with Instrument attributes.</p>
 
 <ul>
-<li>Install the nrconfig NuGet package into the projects you wish to instrument</li>
+<li>Install the NRConfig.Library NuGet package into the projects you wish to instrument</li>
 <li>Annotate at the assembly, class or method level with the [Instrument] attribute</li>
-<li>Run nrconfig against the assemblies in question</li>
+<li>Install the NRConfig.Tool NuGet package</li>
+<li>Run nrconfig.exe against the assemblies in question</li>
 </ul><pre><code>nrconfig /i *.dll
 </code></pre>
 
-<h3>Generate instrumentation files for unadorned assemblies, including the BCL</h3>
+<h3>Generate instrumentation files for unadorned assemblies</h3>
 
 <p>If you can't or don't want to change your code, or want to quickly get a baseline instrumentation configuration file that you can then tweak manually then you can use the /f flag.</p>
 
