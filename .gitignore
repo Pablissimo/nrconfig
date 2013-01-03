@@ -1,6 +1,6 @@
-.dll
-.exe
-.suo
+*.dll
+*.exe
+*.suo
 
 obj
 bin

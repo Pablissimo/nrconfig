@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>BizArkToolkit</id>
+    <version>2.0.1</version>
+    <title>BizArk Toolkit</title>
+    <authors>Brian Brewder</authors>
+    <owners>Brian Brewder</owners>
+    <licenseUrl>http://bizark.codeplex.com/license</licenseUrl>
+    <projectUrl>http://bizark.codeplex.com/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A set of utility classes to help with data type conversions, command-line parsing, web uploads/downloads, and many extension classes to simplify common programming tasks. See the BizArk project page (http://bizark.codeplex.com) for more information.</description>
+    <summary>A set of utility classes to help with data type conversions, command-line parsing, web uploads/downloads, and many extension classes to simplify common programming tasks.</summary>
+    <tags>BizArk Conversion Tools Web WebRequest command-line extensions</tags>
+    <references>
+      <reference file="BizArk.Core.dll" />
+    </references>
+  </metadata>
+</package>
