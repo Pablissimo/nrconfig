@@ -34,7 +34,7 @@ namespace NewRelicConfigManager.Rendering
 
                     TracerFactory tracerFactory = new TracerFactory(metricName, groupedByMetric.Key);
 
-                    Func<InstrumentationTarget, Type> typeGetter = x => x.IsConstructor ? x.Constructor.DeclaringType : x.Method.DeclaringType;
+                    Func<InstrumentationTarget, Type> typeGetter = x => x.Method.DeclaringType;
                     var byType = groupedByMetric.GroupBy(x => typeGetter(x));
                     foreach (var groupedByType in byType)
                     {
@@ -79,8 +79,8 @@ namespace NewRelicConfigManager.Rendering
 
         private ExactMethodMatcher GetMatcherFromTarget(InstrumentationTarget target)
         {
-            string methodName = target.IsConstructor ? target.Constructor.Name : target.Method.Name;
-            ParameterInfo[] parameters = target.IsConstructor ? target.Constructor.GetParameters() : target.Method.GetParameters();
+            string methodName = target.Method.Name;
+            ParameterInfo[] parameters = target.Method.GetParameters();
 
             string[] parameterTypeNames = (parameters ?? Enumerable.Empty<ParameterInfo>()).Select(x => GetFriendlyTypeName(x.ParameterType)).ToArray();
 

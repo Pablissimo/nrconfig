@@ -10,11 +10,10 @@ namespace NewRelicConfigManager.Configuration
 {
     public class InstrumentationTarget
     {
-        public bool IsMethod { get { return this.Method != null; } }
-        public bool IsConstructor { get { return this.Constructor != null; } }
+        public bool IsMethod { get; private set; }
+        public bool IsConstructor { get; private set; }
 
-        public MethodInfo Method { get; private set; }
-        public ConstructorInfo Constructor { get; private set; }
+        public MethodBase Method { get; private set; }
         public string MetricName { get; private set; }
         public Metric Metric { get; private set; }
 
@@ -23,13 +22,17 @@ namespace NewRelicConfigManager.Configuration
             this.Method = method;
             this.MetricName = metricName;
             this.Metric = metric;
+
+            this.IsMethod = true;
         }
 
         public InstrumentationTarget(ConstructorInfo constructor, string metricName, Metric metric)
         {
-            this.Constructor = constructor;
+            this.Method = constructor;
             this.MetricName = metricName;
             this.Metric = metric;
+
+            this.IsConstructor = true;
         }
     }
 }

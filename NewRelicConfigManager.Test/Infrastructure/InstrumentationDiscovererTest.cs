@@ -67,23 +67,23 @@ namespace NewRelicConfigManager.Test.Infrastructure
         {
             var result = InstrumentationDiscoverer.GetInstrumentationSet(typeof(ClassLevelImplicitMarkup));
 
-            var staticCtors = result.Where(x => x.IsConstructor && x.Constructor.IsStatic);
-            var ctors = result.Where(x => x.IsConstructor && !x.Constructor.IsStatic);
+            var staticCtors = result.Where(x => x.IsConstructor && x.Method.IsStatic);
+            var ctors = result.Where(x => x.IsConstructor && !x.Method.IsStatic);
 
             var methods = result.Where(x => x.IsMethod);
 
             Assert.IsTrue(staticCtors.Any());
             Assert.AreEqual(4, ctors.Count());
-            Assert.AreEqual(1, ctors.Count(x => x.Constructor.DeclaringType == typeof(ClassLevelImplicitMarkup.Nested)));
+            Assert.AreEqual(1, ctors.Count(x => x.Method.DeclaringType == typeof(ClassLevelImplicitMarkup.Nested)));
 
             // Single string param constructor
             Assert.IsTrue
                 (
                     ctors.Any
                     (
-                        x => x.Constructor.GetParameters() != null
-                        && x.Constructor.GetParameters().Count() == 1
-                        && x.Constructor.GetParameters().Any
+                        x => x.Method.GetParameters() != null
+                        && x.Method.GetParameters().Count() == 1
+                        && x.Method.GetParameters().Any
                         (
                             y => y.ParameterType == typeof(string)
                         )
@@ -91,7 +91,7 @@ namespace NewRelicConfigManager.Test.Infrastructure
                 );
 
             // Void constructor
-            Assert.IsTrue(ctors.Any(x => x.Constructor.GetParameters() == null || x.Constructor.GetParameters().Count() == 0));
+            Assert.IsTrue(ctors.Any(x => x.Method.GetParameters() == null || x.Method.GetParameters().Count() == 0));
 
             var autoPropInstrumented = methods.Where(x => x.Method.Name.EndsWith("InstrumentedAutoProperty"));
             var explicitPropInstrumented = methods.Where(x => x.Method.Name.EndsWith("InstrumentedExplicitProperty"));
@@ -117,8 +117,8 @@ namespace NewRelicConfigManager.Test.Infrastructure
         {
             var result = InstrumentationDiscoverer.GetInstrumentationSet(typeof(ExplicitMarkup));
 
-            var staticCtors = result.Where(x => x.IsConstructor && x.Constructor.IsStatic);
-            var ctors = result.Where(x => x.IsConstructor && !x.Constructor.IsStatic);
+            var staticCtors = result.Where(x => x.IsConstructor && x.Method.IsStatic);
+            var ctors = result.Where(x => x.IsConstructor && !x.Method.IsStatic);
 
             var methods = result.Where(x => x.IsMethod);
 
@@ -130,9 +130,9 @@ namespace NewRelicConfigManager.Test.Infrastructure
                 (
                     ctors.Any
                     (
-                        x => x.Constructor.GetParameters() != null 
-                        && x.Constructor.GetParameters().Count() == 1 
-                        && x.Constructor.GetParameters().Any
+                        x => x.Method.GetParameters() != null
+                        && x.Method.GetParameters().Count() == 1
+                        && x.Method.GetParameters().Any
                         (
                             y => y.ParameterType == typeof(string)
                         )
@@ -140,7 +140,7 @@ namespace NewRelicConfigManager.Test.Infrastructure
                 );
 
             // Void constructor
-            Assert.IsTrue(ctors.Any(x => x.Constructor.GetParameters() == null || x.Constructor.GetParameters().Count() == 0));
+            Assert.IsTrue(ctors.Any(x => x.Method.GetParameters() == null || x.Method.GetParameters().Count() == 0));
 
             var autoPropInstrumented = methods.Where(x => x.Method.Name.EndsWith("InstrumentedAutoProperty"));
             var explicitPropInstrumented = methods.Where(x => x.Method.Name.EndsWith("InstrumentedExplicitProperty"));
