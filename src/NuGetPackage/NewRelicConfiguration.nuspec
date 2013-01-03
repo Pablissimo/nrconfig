@@ -1,0 +1,16 @@
+﻿<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>NewRelicConfiguration.dll</id>
+    <version>1.0.0</version>
+    <authors>Pablissimo</authors>
+    <owners>Pablissimo</owners>
+    <licenseUrl>http://opensource.org/licenses/BSD-2-Clause</licenseUrl>
+    <projectUrl>http://pablissimo.github.com/nrconfig/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Package description</description>
+    <releaseNotes>Initial release.</releaseNotes>
+    <copyright>Copyright 2013</copyright>
+    <tags>NewRelic New Relic Configuration</tags>
+  </metadata>
+</package>

@@ -58,7 +58,7 @@
     <Compile Include="TestClasses\MixedMarkup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NewRelicConfigManager.csproj">
+    <ProjectReference Include="..\NewRelicConfigManager\NewRelicConfigManager.csproj">
       <Project>{c93b069a-da84-4fcb-bd39-fc1a59cdd03b}</Project>
       <Name>NewRelicConfigManager</Name>
     </ProjectReference>
