@@ -28,6 +28,8 @@ namespace NewRelicConfigBuilder
         const int RETURN_FAILURE = -1;
         const int RETURN_SUCCESS = 0;
 
+        static int _windowWidth = 80;
+
         static int Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
@@ -36,7 +38,16 @@ namespace NewRelicConfigBuilder
             parsedArgs.Initialize();
             if (parsedArgs.Help || !parsedArgs.IsValid())
             {
-                Console.WriteLine(parsedArgs.GetHelpText(Console.WindowWidth));
+                try
+                {
+                    _windowWidth = Console.WindowWidth;
+                }
+                catch (IOException)
+                {
+                    // Running in powershell?
+                }
+
+                Console.WriteLine(parsedArgs.GetHelpText(_windowWidth));
                 return Environment.ExitCode = RETURN_FAILURE;
             }
 
@@ -70,7 +81,7 @@ namespace NewRelicConfigBuilder
                 if (pathPart.Any(x => invalidPathCharacters.Any(y => y == x)) || filePart.Any(x => invalidFilenameCharacters.Any(y => y == x)))
                 {
                     Console.WriteLine("The specified output filename is invalid : " + parsedArgs.OutputFile + " " + pathPart + " " + filePart);
-                    Console.WriteLine(parsedArgs.GetHelpText(Console.WindowWidth));
+                    Console.WriteLine(parsedArgs.GetHelpText(_windowWidth));
 
                     return Environment.ExitCode = RETURN_FAILURE;
                 }
@@ -78,7 +89,7 @@ namespace NewRelicConfigBuilder
             catch (Exception ex)
             {
                 Console.WriteLine("The specified output filename is invalid ({0})", ex.Message);
-                Console.WriteLine(parsedArgs.GetHelpText(Console.WindowWidth));
+                Console.WriteLine(parsedArgs.GetHelpText(_windowWidth));
 
                 return Environment.ExitCode = RETURN_FAILURE;
             }
