@@ -25,14 +25,19 @@ namespace NewRelicConfigBuilder
 
         const int MAX_TARGETS_BEFORE_WARNING = 2000;
 
-        static void Main(string[] args)
+        const int RETURN_FAILURE = -1;
+        const int RETURN_SUCCESS = 0;
+
+        static int Main(string[] args)
         {
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
             var parsedArgs = new CommandLineArgs();
             parsedArgs.Initialize();
             if (parsedArgs.Help || !parsedArgs.IsValid())
             {
                 Console.WriteLine(parsedArgs.GetHelpText(Console.WindowWidth));
-                return;
+                return Environment.ExitCode = RETURN_FAILURE;
             }
 
             int verbosity = VERBOSITY_NORMAL;
@@ -67,7 +72,7 @@ namespace NewRelicConfigBuilder
                     Console.WriteLine("The specified output filename is invalid : " + parsedArgs.OutputFile + " " + pathPart + " " + filePart);
                     Console.WriteLine(parsedArgs.GetHelpText(Console.WindowWidth));
 
-                    return;
+                    return Environment.ExitCode = RETURN_FAILURE;
                 }
             }
             catch (Exception ex)
@@ -75,7 +80,7 @@ namespace NewRelicConfigBuilder
                 Console.WriteLine("The specified output filename is invalid ({0})", ex.Message);
                 Console.WriteLine(parsedArgs.GetHelpText(Console.WindowWidth));
 
-                return;
+                return Environment.ExitCode = RETURN_FAILURE;
             }
 
             DateTime start = DateTime.Now;
@@ -98,6 +103,13 @@ namespace NewRelicConfigBuilder
             {
                 Console.WriteLine("Output written to {0} in {1:f2}s - memory allocated {2:n0}KB", parsedArgs.OutputFile, (DateTime.Now - start).TotalSeconds, (bytesAfter - bytesBefore) / 1024f);
             }
+
+            return Environment.ExitCode;
+        }
+
+        static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            log4net.LogManager.GetLogger(typeof(Program)).Fatal("Unhandled exception during operation - try running with /v or /debug flags for a trace to be sent to developer.", e.ExceptionObject as Exception);
         }
 
         private static void ConfigureLogging(int verbosity)
