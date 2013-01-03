@@ -44,7 +44,8 @@ namespace NewRelicConfigManager.Infrastructure
         /// instrumentable.</returns>
         public static IEnumerable<InstrumentationTarget> GetInstrumentationSet(Assembly assy)
         {
-            return GetInstrumentationSet(assy, null);
+            InstrumentAttribute context = assy.GetCustomAttribute(typeof(InstrumentAttribute)) as InstrumentAttribute;
+            return GetInstrumentationSet(assy, context);
         }
 
         /// <summary>
