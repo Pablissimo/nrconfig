@@ -23,6 +23,8 @@ namespace NewRelicConfigBuilder
         const int VERBOSITY_VERBOSE = 1;
         const int VERBOSITY_DEBUG = 2;
 
+        const int MAX_TARGETS_BEFORE_WARNING = 2000;
+
         static void Main(string[] args)
         {
             var parsedArgs = new CommandLineArgs();
@@ -77,6 +79,7 @@ namespace NewRelicConfigBuilder
             }
 
             DateTime start = DateTime.Now;
+            long bytesBefore = GC.GetTotalMemory(true);
 
             int exitCode = 0;
             switch (mode)
@@ -89,9 +92,11 @@ namespace NewRelicConfigBuilder
                     break;
             }
 
+            long bytesAfter = GC.GetTotalMemory(false);
+
             if (exitCode == 0)
             {
-                Console.WriteLine("Output written to {0} in {1:f2}s", parsedArgs.OutputFile, (DateTime.Now - start).TotalSeconds);
+                Console.WriteLine("Output written to {0} in {1:f2}s - memory allocated {2:n0}KB", parsedArgs.OutputFile, (DateTime.Now - start).TotalSeconds, (bytesAfter - bytesBefore) / 1024f);
             }
         }
 
@@ -238,6 +243,14 @@ namespace NewRelicConfigBuilder
                     }
 
                     targets.AddRange(toAdd);
+                }
+
+                Console.WriteLine("Processed {0} targets", targets.Count);
+
+                if (targets.Count > MAX_TARGETS_BEFORE_WARNING)
+                {
+                    Console.WriteLine("WARNING - New Relic recommend instrumenting no more than {0} targets to avoid performance issues.", MAX_TARGETS_BEFORE_WARNING);
+                    Console.WriteLine("See https://newrelic.com/docs/dotnet/CustomInstrumentation.html for more information");
                 }
 
                 string tempPath = Path.GetTempFileName();
