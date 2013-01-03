@@ -8,6 +8,9 @@ using System.Xml.Serialization;
 
 namespace NewRelicConfigManager.Rendering
 {
+    /// <summary>
+    /// Class for New Relic-compatible XML output of the extension element
+    /// </summary>
     [XmlRoot(ElementName = "extension", Namespace = "urn:newrelic-extension")]
     public class Extension
     {
@@ -19,6 +22,13 @@ namespace NewRelicConfigManager.Rendering
             this.Instrumentation = new Instrumentation();
         }
 
+        /// <summary>
+        /// Produces a new Extension object that represents the union of all instrumentation
+        /// targets specified in the supplied Extension objects.
+        /// </summary>
+        /// <param name="toMerge">The Extension objects to be merged.</param>
+        /// <returns>A single Extension object that represents the combined instrumentation
+        /// footprint described by all of the supplied Extension objects.</returns>
         public static Extension Merge(params Extension[] toMerge)
         {
             Extension toReturn = new Extension();

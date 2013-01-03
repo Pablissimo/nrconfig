@@ -159,13 +159,11 @@ namespace NewRelicConfigBuilder
                 List<Extension> extensions = new List<Extension>();
                 foreach (string path in inputPaths)
                 {
-                    Renderer renderer = new Renderer();
-
                     try
                     {
                         using (FileStream r = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
                         {
-                            extensions.Add(renderer.LoadRenderedFromStream(r));
+                            extensions.Add(Renderer.LoadRenderedFromStream(r));
                         }
                     }
                     catch (Exception ex)
@@ -182,7 +180,7 @@ namespace NewRelicConfigBuilder
                     string tempPath = Path.GetTempFileName();
                     using (FileStream w = new FileStream(tempPath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None))
                     {
-                        new Renderer().RenderToStream(merged, w);
+                        Renderer.RenderToStream(merged, w);
                     }
 
                     // Delete existing file, if required
@@ -245,7 +243,7 @@ namespace NewRelicConfigBuilder
                 string tempPath = Path.GetTempFileName();
                 using (FileStream w = new FileStream(tempPath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None))
                 {
-                    new Renderer().RenderToStream(targets, w);
+                    Renderer.RenderToStream(targets, w);
                 }
 
                 // Delete existing file, if required

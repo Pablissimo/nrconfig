@@ -12,9 +12,19 @@ using System.Xml.Serialization;
 
 namespace NewRelicConfigManager.Rendering
 {
-    public class Renderer
+    /// <summary>
+    /// Renders or manipulates New Relic-compatible XML configuration files for custom instrumentation.
+    /// </summary>
+    public static class Renderer
     {
-        public Extension Render(IEnumerable<InstrumentationTarget> targets)
+        /// <summary>
+        /// Creates an XML-renderable Extension object that represents the instrumentation settings
+        /// specified by the supplied list of targets.
+        /// </summary>
+        /// <param name="targets">The set of targets to be instrumented.</param>
+        /// <returns>An Extension object representing the in-memory New Relic custom
+        /// instrumentation configuration XML document.</returns>
+        public static Extension Render(IEnumerable<InstrumentationTarget> targets)
         {
             Instrumentation toReturn = new Instrumentation();
 
@@ -34,7 +44,7 @@ namespace NewRelicConfigManager.Rendering
 
                     TracerFactory tracerFactory = new TracerFactory(metricName, groupedByMetric.Key);
 
-                    Func<InstrumentationTarget, Type> typeGetter = x => x.Method.DeclaringType;
+                    Func<InstrumentationTarget, Type> typeGetter = x => x.Target.DeclaringType;
                     var byType = groupedByMetric.GroupBy(x => typeGetter(x));
                     foreach (var groupedByType in byType)
                     {
@@ -57,7 +67,13 @@ namespace NewRelicConfigManager.Rendering
             return new Extension() { Instrumentation = toReturn };
         }
 
-        public void RenderToStream(IEnumerable<InstrumentationTarget> targets, Stream stream)
+        /// <summary>
+        /// Renders a supplied collection of instrumentation targets to a specified stream as
+        /// a New Relic-compatible XML document.
+        /// </summary>
+        /// <param name="targets">The set of targets to be instrumented.</param>
+        /// <param name="stream">The stream to which the XML document should be rendered.</param>
+        public static void RenderToStream(IEnumerable<InstrumentationTarget> targets, Stream stream)
         {
             Extension rootElement = Render(targets);
 
@@ -65,22 +81,34 @@ namespace NewRelicConfigManager.Rendering
             serializer.Serialize(stream, rootElement);
         }
         
-        public void RenderToStream(Extension extension, Stream stream)
+        /// <summary>
+        /// Renders a supplied Extension object to a specified stream as a New Relic-compatible
+        /// XML document.
+        /// </summary>
+        /// <param name="extension">The Extension object to be rendered.</param>
+        /// <param name="stream">The stream to which the XML document should be rendered.</param>
+        public static void RenderToStream(Extension extension, Stream stream)
         {
             XmlSerializer serializer = new XmlSerializer(typeof(Extension));
             serializer.Serialize(stream, extension);
         }
 
-        public Extension LoadRenderedFromStream(Stream stream)
+        /// <summary>
+        /// Generates an in-memory representation of a New Relic custom instrumentation
+        /// XML file from the specified stream.
+        /// </summary>
+        /// <param name="stream">The stream from which the document should be loaded.</param>
+        /// <returns>An Extension object representing the contents of the stream.</returns>
+        public static Extension LoadRenderedFromStream(Stream stream)
         {
             XmlSerializer serializer = new XmlSerializer(typeof(Extension));
             return serializer.Deserialize(stream) as Extension;
         }
 
-        private ExactMethodMatcher GetMatcherFromTarget(InstrumentationTarget target)
+        private static ExactMethodMatcher GetMatcherFromTarget(InstrumentationTarget target)
         {
-            string methodName = target.Method.Name;
-            ParameterInfo[] parameters = target.Method.GetParameters();
+            string methodName = target.Target.Name;
+            ParameterInfo[] parameters = target.Target.GetParameters();
 
             string[] parameterTypeNames = (parameters ?? Enumerable.Empty<ParameterInfo>()).Select(x => GetFriendlyTypeName(x.ParameterType)).ToArray();
 
@@ -111,7 +139,7 @@ namespace NewRelicConfigManager.Rendering
             }
         }
 
-        private Match GetMatchFromType(Type t)
+        private static Match GetMatchFromType(Type t)
         {
             var assy = t.Assembly.GetName().Name;
             var className = t.ToString();

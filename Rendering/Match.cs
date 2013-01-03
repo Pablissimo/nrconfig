@@ -7,6 +7,9 @@ using System.Xml.Serialization;
 
 namespace NewRelicConfigManager.Rendering
 {
+    /// <summary>
+    /// Class for New Relic-compatible XML output of the match element
+    /// </summary>
     public class Match
     {
         [XmlAttribute(AttributeName="assemblyName")]

@@ -9,6 +9,9 @@ using System.Xml.Serialization;
 
 namespace NewRelicConfigManager.Rendering
 {
+    /// <summary>
+    /// /// Class for New Relic-compatible XML output of the tracerFactory element
+    /// </summary>
     public class TracerFactory
     {
         [XmlAttribute(AttributeName="metricName")]

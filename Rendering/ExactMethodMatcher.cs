@@ -7,6 +7,9 @@ using System.Xml.Serialization;
 
 namespace NewRelicConfigManager.Rendering
 {
+    /// <summary>
+    /// Class for New Relic-compatible XML output of the exactMethodMatcher element.
+    /// </summary>
     public class ExactMethodMatcher
     {
         [XmlAttribute(AttributeName="methodName")]
