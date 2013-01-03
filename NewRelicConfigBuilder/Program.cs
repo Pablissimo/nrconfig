@@ -291,7 +291,7 @@ namespace NewRelicConfigBuilder
             [Description("Indicates that verbose diagnostic output should be rendered during operation")]
             public bool Verbose { get; set; }
 
-            [CmdLineArg(Alias = "vv", Required = false)]
+            [CmdLineArg(Alias = "debug", Required = false)]
             [Description("Indicates that very detailed diagnostic output should be rendered during operation. Note - this will "
                 + "slow down operation.")]
             public bool VeryVerbose { get; set; }
