@@ -44,14 +44,17 @@
   <ItemGroup>
     <Content Include="..\NRConfigTool\bin\Release\nrconfig.exe">
       <Link>tools\nrconfig.exe</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="readme.txt" />
+    <Content Include="readme.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
-    <None Include="NRConfig.Tool.nuspec">
+    <Content Include="NRConfig.Tool.nuspec">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
-    </None>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
