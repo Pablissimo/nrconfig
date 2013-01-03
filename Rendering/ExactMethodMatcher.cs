@@ -30,5 +30,24 @@ namespace NewRelicConfigManager.Rendering
                 this.ParameterTypes = string.Join(",", parameterTypes);
             }
         }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as ExactMethodMatcher;
+            if (other == null)
+            {
+                return false;
+            }
+            else
+            {
+                return this.MethodName == other.MethodName && this.ParameterTypes == other.ParameterTypes;
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return (251 * (MethodName ?? "").GetHashCode())
+                + (ParameterTypes ?? "").GetHashCode();
+        }
     }
 }

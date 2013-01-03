@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="Infrastructure\InstrumentationDiscovererTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rendering\ExtensionTest.cs" />
     <Compile Include="TestClasses\ClassLevelImplicitMarkup.cs" />
     <Compile Include="TestClasses\ExplicitMarkup.cs" />
     <Compile Include="TestClasses\MixedMarkup.cs" />

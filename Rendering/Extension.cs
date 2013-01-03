@@ -33,7 +33,7 @@ namespace NewRelicConfigManager.Rendering
         {
             Extension toReturn = new Extension();
 
-            var matchRecords = new Dictionary<DenormalisedExactMatchRecord, List<ExactMethodMatcher>>();
+            var matchRecords = new Dictionary<DenormalisedExactMatchRecord, HashSet<ExactMethodMatcher>>();
 
             foreach (var factory in toMerge.SelectMany(x => x.Instrumentation.TracerFactories))
             {
@@ -47,14 +47,14 @@ namespace NewRelicConfigManager.Rendering
                         ClassName = match.ClassName
                     };
 
-                    List<ExactMethodMatcher> matchers = null;
+                    HashSet<ExactMethodMatcher> matchers = null;
                     
                     if (!matchRecords.TryGetValue(matchRecord, out matchers))
                     {
-                        matchers = matchRecords[matchRecord] = new List<ExactMethodMatcher>();
+                        matchers = matchRecords[matchRecord] = new HashSet<ExactMethodMatcher>();
                     }
 
-                    matchers.AddRange(match.Matches.Select(x => new ExactMethodMatcher { MethodName = x.MethodName, ParameterTypes = x.ParameterTypes }));
+                    matchers.UnionWith(match.Matches.Select(x => new ExactMethodMatcher { MethodName = x.MethodName, ParameterTypes = x.ParameterTypes }));
                 }
             }
 
