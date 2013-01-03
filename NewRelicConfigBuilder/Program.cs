@@ -17,6 +17,12 @@ using System.Xml.Serialization;
 
 namespace NewRelicConfigBuilder
 {
+    enum OperationMode
+    {
+        Create,
+        Merge
+    }
+
     class Program
     {
         static void Main(string[] args)
@@ -27,6 +33,12 @@ namespace NewRelicConfigBuilder
             {
                 Console.WriteLine(parsedArgs.GetHelpText(Console.WindowWidth));
                 return;
+            }
+
+            var mode = OperationMode.Create;
+            if (parsedArgs.MergeInputs)
+            {
+                mode = OperationMode.Merge;
             }
 
             // Validate the output filename
@@ -48,46 +60,117 @@ namespace NewRelicConfigBuilder
             {
                 Console.WriteLine("The specified output filename is invalid");
                 Console.WriteLine(parsedArgs.GetHelpText(Console.WindowWidth));
+                return;
             }
 
             DateTime start = DateTime.Now;
 
-            int exitCode = Environment.ExitCode = Process(parsedArgs);
+            int exitCode = 0;
+            switch (mode)
+            {
+                case OperationMode.Create:
+                    exitCode = Environment.ExitCode = ProcessCreate(parsedArgs);
+                    break;
+                case OperationMode.Merge:
+                    exitCode = Environment.ExitCode = ProcessMerge(parsedArgs);
+                    break;
+            }
+
             if (exitCode == 0)
             {
                 Console.WriteLine("Output written to {0} in {1:f2}s", parsedArgs.OutputFile, (DateTime.Now - start).TotalSeconds);
             }
         }
 
-        public static int Process(CommandLineArgs args)
+        private static IEnumerable<string> GetInputFiles(CommandLineArgs args)
+        {
+            List<string> inputPaths = new List<string>();
+            foreach (string fileSpec in args.InputFiles)
+            {
+                try
+                {
+                    var spec = System.Environment.ExpandEnvironmentVariables(fileSpec);
+
+                    var directory = Path.GetDirectoryName(spec);
+                    if (string.IsNullOrWhiteSpace(directory))
+                    {
+                        directory = Environment.CurrentDirectory;
+                    }
+
+                    var filename = Path.GetFileName(spec);
+                    inputPaths.AddRange(Directory.GetFiles(directory, filename));
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Failed processing input file {0}", fileSpec, args.Verbose ? ex.ToString() : ex.Message);
+                    if (!args.ContinueOnFailure)
+                    {
+                        throw;
+                    }
+                }
+            }
+
+            return inputPaths;
+        }
+
+        public static int ProcessMerge(CommandLineArgs args)
         {
             try
             {
-                List<string> inputPaths = new List<string>();
-                foreach (string fileSpec in args.InputFiles)
+                IEnumerable<string> inputPaths = GetInputFiles(args);
+
+                List<Extension> extensions = new List<Extension>();
+                foreach (string path in inputPaths)
                 {
+                    Renderer renderer = new Renderer();
+
                     try
                     {
-                        var spec = System.Environment.ExpandEnvironmentVariables(fileSpec);
-
-                        var directory = Path.GetDirectoryName(spec);
-                        if (string.IsNullOrWhiteSpace(directory))
+                        using (FileStream r = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
                         {
-                            directory = Environment.CurrentDirectory;
+                            extensions.Add(renderer.LoadRenderedFromStream(r));
                         }
-
-                        var filename = Path.GetFileName(spec);
-                        inputPaths.AddRange(Directory.GetFiles(directory, filename));
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("Failed processing input file {0}", fileSpec, args.Verbose ? ex.ToString() : ex.Message);
+                        Console.WriteLine("Failed to load file {0}: {1}", path, args.Verbose ? ex.ToString() : ex.Message);
                         if (!args.ContinueOnFailure)
                         {
-                            return -1;
+                            throw;
                         }
                     }
+
+                    Extension merged = Extension.Merge(extensions.ToArray());
+
+                    string tempPath = Path.GetTempFileName();
+                    using (FileStream w = new FileStream(tempPath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None))
+                    {
+                        new Renderer().RenderToStream(merged, w);
+                    }
+
+                    // Delete existing file, if required
+                    if (File.Exists(args.OutputFile))
+                    {
+                        File.Delete(args.OutputFile);
+                    }
+
+                    File.Move(tempPath, args.OutputFile);
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed to process instrumentation: {0}", args.Verbose ? ex.ToString() : ex.Message);
+                return -1;
+            }
+
+            return 0;
+        }
+
+        public static int ProcessCreate(CommandLineArgs args)
+        {
+            try
+            {
+                IEnumerable<string> inputPaths = GetInputFiles(args);
 
                 InstrumentAttribute assemblyAttribute = null;
                 if (args.ForceIfNotMarkedUpValid)
@@ -157,10 +240,16 @@ namespace NewRelicConfigBuilder
             [Description("One or more paths to assemblies to be included in the custom instrumentation file. "
                 + "Wildcards are permitted - for example, *.dll will process all DLL files in the current directory.")]
             public string[] InputFiles { get; set; }
+
             [CmdLineArg(Alias="o", Required = false)]
             [Description("The path where the custom instrumentation file should be written. If not supplied, the file is "
                 + "called CustomInstrumentation.xml and output to the current directory")]
             public string OutputFile { get; set; }
+
+            [CmdLineArg(Alias = "m", Required = false)]
+            [Description("Indicates that the tool should merge two or more custom instrumentation XML files into a single "
+                + "output file.")]
+            public bool MergeInputs { get; set; }
 
             [CmdLineArg(Alias="v", Required = false)]
             [Description("Indicates that verbose diagnostic output should be rendered during operation")]

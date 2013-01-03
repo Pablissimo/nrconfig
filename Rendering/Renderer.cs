@@ -64,6 +64,18 @@ namespace NewRelicConfigManager.Rendering
             XmlSerializer serializer = new XmlSerializer(typeof(Extension));
             serializer.Serialize(stream, rootElement);
         }
+        
+        public void RenderToStream(Extension extension, Stream stream)
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(Extension));
+            serializer.Serialize(stream, extension);
+        }
+
+        public Extension LoadRenderedFromStream(Stream stream)
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(Extension));
+            return serializer.Deserialize(stream) as Extension;
+        }
 
         private ExactMethodMatcher GetMatcherFromTarget(InstrumentationTarget target)
         {
@@ -82,8 +94,6 @@ namespace NewRelicConfigManager.Rendering
 
         private static string GetFriendlyTypeName(Type t)
         {
-            return t.FullName;
-
             if (!t.IsGenericType)
             {
                 return t.FullName;
@@ -92,11 +102,12 @@ namespace NewRelicConfigManager.Rendering
             {
                 // Generics when asked for their full-name do crazy things like:
                 // System.Nullable`1[[System.Decimal, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]
-                // Which isn't much use to us. However, we can fiddle this...
-                const string FORMAT = "{0}.{1}[{2}]";
-                string[] innerTypes = t.GenericTypeArguments.Select(x => string.Format("[{0}]", GetFriendlyTypeName(x))).ToArray();
+                // Which isn't much use to us as NewRelic uses a combination of backtick notation and angle brackets. 
+                // However, we can fiddle this...
+                const string FORMAT = "{0}.{1}`{2}<{3}>";
+                string[] innerTypes = t.GenericTypeArguments.Select(x => string.Format("{0}", GetFriendlyTypeName(x))).ToArray();
 
-                return string.Format(FORMAT, t.Namespace, t.Name, string.Join(",", innerTypes));
+                return string.Format(FORMAT, t.Namespace, t.Name, t.GenericTypeArguments.Count(), string.Join(",", innerTypes));
             }
         }
 
