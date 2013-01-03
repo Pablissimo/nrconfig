@@ -1,5 +1,5 @@
 ﻿using BizArk.Core.CmdLine;
-using NewRelicConfiguration;
+using NRConfig;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

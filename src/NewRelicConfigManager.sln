@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Express 2012 for Windows Desktop
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewRelicConfigManager", "NewRelicConfigManager\NewRelicConfigManager.csproj", "{C93B069A-DA84-4FCB-BD39-FC1A59CDD03B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NRConfigManager", "NRConfigManager\NRConfigManager.csproj", "{C93B069A-DA84-4FCB-BD39-FC1A59CDD03B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewRelicConfiguration", "NewRelicConfiguration\NewRelicConfiguration.csproj", "{33536E8A-988A-4C6F-97CC-B708C8DE2978}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NRConfig", "NRConfig\NRConfig.csproj", "{33536E8A-988A-4C6F-97CC-B708C8DE2978}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NRConfigTool", "NRConfigTool\NRConfigTool.csproj", "{96AE46FC-E178-4394-BBE1-ED4317D28EFE}"
 EndProject
@@ -14,9 +14,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{23E95B
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewRelicConfiguration.Test", "NewRelicConfiguration.Test\NewRelicConfiguration.Test.csproj", "{2A437959-3C15-4E52-8478-1556B0E1B480}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NRConfig.Test", "NRConfig.Test\NRConfig.Test.csproj", "{2A437959-3C15-4E52-8478-1556B0E1B480}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewRelicConfigManager.Test", "NewRelicConfigManager.Test\NewRelicConfigManager.Test.csproj", "{2456F28A-8F2A-4D34-87D3-F824AEC976A6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NRConfigManager.Test", "NRConfigManager.Test\NRConfigManager.Test.csproj", "{2456F28A-8F2A-4D34-87D3-F824AEC976A6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuGetPackage-Lib", "NuGetPackage-Lib\NuGetPackage-Lib.csproj", "{EF3432FB-DA8F-4016-B0DA-AE2509219EFC}"
 	ProjectSection(ProjectDependencies) = postProject

@@ -1,9 +1,9 @@
 ﻿using BizArk.Core.CmdLine;
-using NewRelicConfigManager.Configuration;
-using NewRelicConfigManager.Infrastructure;
-using NewRelicConfigManager.Rendering;
-using NewRelicConfigManager.Test.TestClasses;
-using NewRelicConfiguration;
+using NRConfigManager.Configuration;
+using NRConfigManager.Infrastructure;
+using NRConfigManager.Rendering;
+using NRConfigManager.Test.TestClasses;
+using NRConfig;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

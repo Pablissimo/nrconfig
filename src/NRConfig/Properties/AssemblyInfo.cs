@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("nrconfig")]
-[assembly: AssemblyDescription("Builds custom instrumentation files for New Relic-instrumented .NET projects")]
+[assembly: AssemblyTitle("NRConfig")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("pablissimo.com")]
-[assembly: AssemblyProduct("nrconfig")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("NRConfig")]
 [assembly: AssemblyCopyright("Copyright © 2013 Paul O'Neill")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("811d567e-61f6-4919-b9b2-890251c1d374")]
+[assembly: Guid("65fb2c46-9e18-4b4b-bdd9-ac14d0b716ed")]
 
 // Version information for an assembly consists of the following four values:
 //

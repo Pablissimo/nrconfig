@@ -4,13 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{EF3432FB-DA8F-4016-B0DA-AE2509219EFC}</ProjectGuid>
+    <ProjectGuid>{C93B069A-DA84-4FCB-BD39-FC1A59CDD03B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NuGetPackage</RootNamespace>
-    <AssemblyName>NuGetPackage</AssemblyName>
+    <RootNamespace>NRConfigManager</RootNamespace>
+    <AssemblyName>NRConfigManager</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">.\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,29 +32,39 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net">
+      <HintPath>..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\InstrumentationTarget.cs" />
+    <Compile Include="Infrastructure\InstrumentationDiscoverer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rendering\ExactMethodMatcher.cs" />
+    <Compile Include="Rendering\Extension.cs" />
+    <Compile Include="Rendering\Instrumentation.cs" />
+    <Compile Include="Rendering\Match.cs" />
+    <Compile Include="Rendering\Renderer.cs" />
+    <Compile Include="Rendering\TracerFactory.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="NRConfig.Library.nuspec">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <ProjectReference Include="..\NRConfig\NRConfig.csproj">
+      <Project>{33536e8a-988a-4c6f-97cc-b708c8de2978}</Project>
+      <Name>NRConfig</Name>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <Content Include="..\NRConfig\bin\Release\NRConfig.dll">
-      <Link>lib\NRConfig.dll</Link>
-    </Content>
-    <Content Include="readme.txt" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>del $(TargetPath)
-del $(TargetDir)*.pdb</PostBuildEvent>
-  </PropertyGroup>
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
