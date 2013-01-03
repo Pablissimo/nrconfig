@@ -49,7 +49,7 @@
     <Content Include="readme.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="NewRelicConfiguration.nuspec">
+    <None Include="NRConfig.Tool.nuspec">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </None>
