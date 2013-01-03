@@ -42,9 +42,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\NewRelicConfigBuilder\bin\Release\nrconfig.exe">
+    <Content Include="..\NRConfigTool\bin\Release\nrconfig.exe">
       <Link>tools\nrconfig.exe</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="readme.txt" />
   </ItemGroup>

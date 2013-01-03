@@ -5,7 +5,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewRelicConfigManager", "Ne
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewRelicConfiguration", "NewRelicConfiguration\NewRelicConfiguration.csproj", "{33536E8A-988A-4C6F-97CC-B708C8DE2978}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewRelicConfigBuilder", "NewRelicConfigBuilder\NewRelicConfigBuilder.csproj", "{96AE46FC-E178-4394-BBE1-ED4317D28EFE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NRConfigTool", "NRConfigTool\NRConfigTool.csproj", "{96AE46FC-E178-4394-BBE1-ED4317D28EFE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{23E95B2C-8DE9-49AA-BD63-CF31A9D02794}"
 	ProjectSection(SolutionItems) = preProject
