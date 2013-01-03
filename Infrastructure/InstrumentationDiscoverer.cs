@@ -1,4 +1,5 @@
-﻿using NewRelicConfigManager.Configuration;
+﻿using log4net;
+using NewRelicConfigManager.Configuration;
 using NewRelicConfiguration;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,8 @@ namespace NewRelicConfigManager.Infrastructure
 {
     public static class InstrumentationDiscoverer
     {
+        private static ILog _logger = LogManager.GetLogger(typeof(InstrumentationDiscoverer));
+
         private static Type _instAttributeType = typeof(InstrumentAttribute);
 
         public static IEnumerable<InstrumentationTarget> GetInstrumentationSet(IEnumerable<Assembly> assemblies)
@@ -34,7 +37,11 @@ namespace NewRelicConfigManager.Infrastructure
         {
             List<InstrumentationTarget> toReturn = new List<InstrumentationTarget>();
 
+            _logger.InfoFormat("Processing assembly {0}", assy.FullName);
+
             var allTypes = assy.GetTypes();
+            _logger.DebugFormat("Found {0} types in assembly {1}", allTypes.Count(), assy.FullName);
+
             foreach (Type t in allTypes.Where(x => x.IsClass))
             {
                 toReturn.AddRange(GetInstrumentationSet(t, context));
@@ -54,6 +61,8 @@ namespace NewRelicConfigManager.Infrastructure
 
             if (!t.IsGenericTypeDefinition)
             {
+                _logger.DebugFormat("Processing type {0}", t.FullName);
+
                 HashSet<MethodBase> alreadyAdded = new HashSet<MethodBase>();
 
                 // Does the type have an Instrument attribute?
@@ -100,6 +109,8 @@ namespace NewRelicConfigManager.Infrastructure
                         ctorBindingFlags |= BindingFlags.NonPublic;
                     }
                 }
+
+                _logger.DebugFormat("Prop flags {0}, Ctor flags {1}, Method flags {2}", propBindingFlags, ctorBindingFlags, methodBindingFlags);
 
                 // Instrument everything in this type, irrespective of its member-level
                 // details
@@ -159,11 +170,17 @@ namespace NewRelicConfigManager.Infrastructure
                 var nested = t.GetNestedTypes(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static).Where(x => !x.IsGenericTypeDefinition);
                 if (nested != null && nested.Any())
                 {
+                    _logger.DebugFormat("Found {0} nested types within {1}", nested.Count(), t.FullName);
+
                     foreach (var nestedType in nested)
                     {
                         toReturn.AddRange(GetInstrumentationSet(nestedType, typeLevelAttribute));
                     }
                 }
+            }
+            else
+            {
+                _logger.DebugFormat("Skipping type {0} - generic types not supported", t.FullName);
             }
 
             return toReturn;
@@ -171,12 +188,28 @@ namespace NewRelicConfigManager.Infrastructure
 
         private static InstrumentationTarget GetInstrumentationTarget(MethodInfo methodInfo, InstrumentAttribute context)
         {
+            _logger.DebugFormat("Including method {0}.{1}({2})", methodInfo.DeclaringType.FullName, methodInfo.Name, GetParameterSignature(methodInfo.GetParameters()));
+            
             return new InstrumentationTarget(methodInfo, context.MetricName, context.Metric);
         }
 
         private static InstrumentationTarget GetInstrumentationTarget(ConstructorInfo ctorInfo, InstrumentAttribute context)
         {
+            _logger.DebugFormat("Including constructor {0}.{1}({2})", ctorInfo.DeclaringType.FullName, ctorInfo.Name, GetParameterSignature(ctorInfo.GetParameters()));
+
             return new InstrumentationTarget(ctorInfo, context.MetricName, context.Metric);
+        }
+
+        private static string GetParameterSignature(ParameterInfo[] parameters)
+        {
+            if (parameters == null || !parameters.Any())
+            {
+                return string.Empty;
+            }
+            else
+            {
+                return string.Join(",", parameters.Select(x => x.ParameterType.FullName));
+            }
         }
 
         private static InstrumentAttribute GetEffectiveInstrumentationContext(params InstrumentAttribute[] attrs)

@@ -35,6 +35,18 @@ namespace NewRelicConfigBuilder
                 return;
             }
 
+            int verbosity = 0;
+            if (parsedArgs.VeryVerbose)
+            {
+                verbosity = 2;
+            }
+            else if (parsedArgs.Verbose)
+            {
+                verbosity = 1;
+            }
+
+            ConfigureLogging(verbosity);
+
             var mode = OperationMode.Create;
             if (parsedArgs.MergeInputs)
             {
@@ -79,6 +91,30 @@ namespace NewRelicConfigBuilder
             if (exitCode == 0)
             {
                 Console.WriteLine("Output written to {0} in {1:f2}s", parsedArgs.OutputFile, (DateTime.Now - start).TotalSeconds);
+            }
+        }
+
+        private static void ConfigureLogging(int verbosity)
+        {
+            log4net.Config.BasicConfigurator.Configure();
+
+            var hierarchy = log4net.LogManager.GetRepository() as log4net.Repository.Hierarchy.Hierarchy;
+
+            if (verbosity <= 0)
+            {
+                hierarchy.Root.Level = log4net.Core.Level.Off;
+            }
+            else
+            {
+                switch (verbosity)
+                {
+                    case 1:
+                        hierarchy.Root.Level = log4net.Core.Level.Info;
+                        break;
+                    case 2:
+                        hierarchy.Root.Level = log4net.Core.Level.Debug;
+                        break;
+                }
             }
         }
 
@@ -254,6 +290,11 @@ namespace NewRelicConfigBuilder
             [CmdLineArg(Alias="v", Required = false)]
             [Description("Indicates that verbose diagnostic output should be rendered during operation")]
             public bool Verbose { get; set; }
+
+            [CmdLineArg(Alias = "vv", Required = false)]
+            [Description("Indicates that very detailed diagnostic output should be rendered during operation. Note - this will "
+                + "slow down operation.")]
+            public bool VeryVerbose { get; set; }
 
             [CmdLineArg(Alias = "c", Required = false)]
             [Description("Indicates that the process should try to continue even in the event of a failure")]
