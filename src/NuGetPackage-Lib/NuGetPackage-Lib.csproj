@@ -37,6 +37,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="LICENCE.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="NRConfig.Library.nuspec">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

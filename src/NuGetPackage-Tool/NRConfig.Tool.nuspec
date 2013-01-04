@@ -8,9 +8,9 @@
     <licenseUrl>http://opensource.org/licenses/BSD-2-Clause</licenseUrl>
     <projectUrl>http://pablissimo.github.com/nrconfig/</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Generates custom instrumentation configuration files for New Relic. If you want to mark up your assemblies, classes and methods to get fine-grained control, also add the NRConfig Library NuGet package to your projects.</description>
+    <description>Generates custom instrumentation configuration files for New Relic. If you want to mark up your assemblies, classes and methods to get fine-grained control, also add the NRConfig.Library NuGet package to your projects.</description>
     <releaseNotes>Initial release.</releaseNotes>
-    <copyright>Copyright 2013</copyright>
+    <copyright>Copyright 2013 Paul O'Neill</copyright>
     <tags>NewRelic New Relic Configuration Tool</tags>
   </metadata>
 </package>
