@@ -7,7 +7,7 @@ with the nrconfig.exe tool (separate NuGet package, search 'NRConfig Tool').
 Install the NRConfig.Tool package, mark up your classes and methods then add
 a post-build step to your project:
 
-$(SolutionDir)packages\NRConfig.Tool.1.1.0.0\tools\nrconfig.exe /f all /i $(TargetPath) /o $(TargetDir)$(TargetName).NewRelic.xml
+$(SolutionDir)packages\NRConfig.Tool.1.2.0.0\tools\nrconfig.exe /f all /i $(TargetPath) /o $(TargetDir)$(TargetName).NewRelic.xml
 
 or run the tool manually as required.
 
