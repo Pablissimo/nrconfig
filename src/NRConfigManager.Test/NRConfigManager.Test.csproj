@@ -57,6 +57,9 @@
     <Compile Include="TestClasses\ClassLevelImplicitMarkup.cs" />
     <Compile Include="TestClasses\ExplicitMarkup.cs" />
     <Compile Include="TestClasses\GenericsTest.cs" />
+    <Compile Include="TestClasses\HidingMethods.cs" />
+    <Compile Include="TestClasses\HidingProperties.cs" />
+    <Compile Include="TestClasses\IndexerProperties.cs" />
     <Compile Include="TestClasses\MixedMarkup.cs" />
   </ItemGroup>
   <ItemGroup>

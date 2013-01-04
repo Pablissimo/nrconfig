@@ -92,7 +92,7 @@ namespace NRConfigManager.Infrastructure
         /// <param name="context">The context in which the search for instrumentable methods should take place.</param>
         /// <returns>The set of target methods within the type (or any nested type) that have been marked
         /// as instrumentable.</returns>
-        private static IEnumerable<InstrumentationTarget> GetInstrumentationSet(Type t, InstrumentAttribute context)
+        internal static IEnumerable<InstrumentationTarget> GetInstrumentationSet(Type t, InstrumentAttribute context)
         {
             List<InstrumentationTarget> toReturn = new List<InstrumentationTarget>();
 
@@ -103,7 +103,7 @@ namespace NRConfigManager.Infrastructure
                 HashSet<MethodBase> alreadyAdded = new HashSet<MethodBase>();
 
                 // Does the type have an Instrument attribute?
-                var typeLevelAttribute = t.GetCustomAttribute(_instAttributeType) as InstrumentAttribute;
+                var typeLevelAttribute = t.GetCustomAttribute(_instAttributeType, false) as InstrumentAttribute;
                 typeLevelAttribute = GetEffectiveInstrumentationContext(typeLevelAttribute, context);
 
                 var baseBindingFlags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
@@ -153,7 +153,9 @@ namespace NRConfigManager.Infrastructure
                 // details
                 foreach (MethodInfo methodInfo in t.GetMethods(methodBindingFlags))
                 {
-                    var attr = GetEffectiveInstrumentationContext(methodInfo.GetCustomAttribute(_instAttributeType) as InstrumentAttribute, typeLevelAttribute);
+                    _logger.DebugFormat("Examining method {0}", methodInfo.ToString());
+
+                    var attr = GetEffectiveInstrumentationContext(methodInfo.GetCustomAttribute(_instAttributeType, false) as InstrumentAttribute, typeLevelAttribute);
                     if (attr != null && alreadyAdded.Add(methodInfo))
                     {
                         toReturn.Add(GetInstrumentationTarget(methodInfo, attr));
@@ -162,6 +164,8 @@ namespace NRConfigManager.Infrastructure
 
                 foreach (PropertyInfo propertyInfo in t.GetProperties(propBindingFlags))
                 {
+                    _logger.DebugFormat("Examining property {0}.{1}", propertyInfo.DeclaringType.FullName, propertyInfo.Name);
+
                     var getMethod = propertyInfo.GetGetMethod(true);
                     var setMethod = propertyInfo.GetSetMethod(true);
 
@@ -174,11 +178,11 @@ namespace NRConfigManager.Infrastructure
                         setMethod = null;
                     }
 
-                    var propLevelAttribute = propertyInfo.GetCustomAttribute(_instAttributeType) as InstrumentAttribute;
+                    var propLevelAttribute = propertyInfo.GetCustomAttribute(_instAttributeType, false) as InstrumentAttribute;
 
                     if (getMethod != null)
                     {
-                        var getMethodAttr = GetEffectiveInstrumentationContext(propLevelAttribute, getMethod.GetCustomAttribute(_instAttributeType) as InstrumentAttribute, typeLevelAttribute);
+                        var getMethodAttr = GetEffectiveInstrumentationContext(propLevelAttribute, getMethod.GetCustomAttribute(_instAttributeType, false) as InstrumentAttribute, typeLevelAttribute);
                         if (getMethodAttr != null && alreadyAdded.Add(getMethod))
                         {
                             toReturn.Add(GetInstrumentationTarget(getMethod, getMethodAttr));
@@ -187,7 +191,7 @@ namespace NRConfigManager.Infrastructure
 
                     if (setMethod != null)
                     {
-                        var setMethodAttr = GetEffectiveInstrumentationContext(propLevelAttribute, setMethod.GetCustomAttribute(_instAttributeType) as InstrumentAttribute, typeLevelAttribute);
+                        var setMethodAttr = GetEffectiveInstrumentationContext(propLevelAttribute, setMethod.GetCustomAttribute(_instAttributeType, false) as InstrumentAttribute, typeLevelAttribute);
                         if (setMethodAttr != null && alreadyAdded.Add(setMethod))
                         {
                             toReturn.Add(GetInstrumentationTarget(setMethod, setMethodAttr));
@@ -197,7 +201,9 @@ namespace NRConfigManager.Infrastructure
 
                 foreach (ConstructorInfo constructorInfo in t.GetConstructors(ctorBindingFlags).Where(x => !x.ContainsGenericParameters))
                 {
-                    var attr = GetEffectiveInstrumentationContext(constructorInfo.GetCustomAttribute(_instAttributeType) as InstrumentAttribute, typeLevelAttribute);
+                    _logger.DebugFormat("Examining method {0}", constructorInfo.ToString());
+
+                    var attr = GetEffectiveInstrumentationContext(constructorInfo.GetCustomAttribute(_instAttributeType, false) as InstrumentAttribute, typeLevelAttribute);
                     if (attr != null && alreadyAdded.Add(constructorInfo))
                     {
                         toReturn.Add(GetInstrumentationTarget(constructorInfo, attr));

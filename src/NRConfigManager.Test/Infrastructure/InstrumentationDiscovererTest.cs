@@ -160,5 +160,49 @@ namespace NRConfigManager.Test.Infrastructure
 
             Assert.AreEqual(11, methods.Count());
         }
+
+        [TestMethod]
+        public void InstrumentationTest_ClassesWithHiddenMethodsWorkCorrectly()
+        {
+            var context = new InstrumentAttribute() { Scopes = InstrumentationScopes.PublicMethods };
+            var targets = InstrumentationDiscoverer.GetInstrumentationSet(typeof(HidingMethodsExtended), context);
+
+            // Expecting a single target
+            Assert.AreEqual(1, targets.Count());
+            Assert.AreEqual(typeof(HidingMethodsExtended), targets.First().Target.DeclaringType);
+        }
+
+        [TestMethod]
+        public void InstrumentationTest_ClassesWithHiddenPropertiesWorkCorrectly()
+        {
+            var context = new InstrumentAttribute() { Scopes = InstrumentationScopes.Properties };
+            var targets = InstrumentationDiscoverer.GetInstrumentationSet(typeof(HidingPropertiesExtended), context);
+
+            // Expecting a single target
+            Assert.AreEqual(2, targets.Count());
+            Assert.AreEqual(typeof(HidingPropertiesExtended), targets.First().Target.DeclaringType);
+        }
+
+        [TestMethod]
+        public void InstrumentationTest_IndexerPropertyOverloadsWorkCorrectly()
+        {
+            var context = new InstrumentAttribute() { Scopes = InstrumentationScopes.Properties };
+            var targets = InstrumentationDiscoverer.GetInstrumentationSet(typeof(IndexerProperties), context);
+
+            // Expecting a single target
+            Assert.AreEqual(4, targets.Count());
+            Assert.AreEqual(typeof(IndexerProperties), targets.First().Target.DeclaringType);
+        }
+
+        [TestMethod]
+        public void InstrumentationTest_HiddenIndexerPropertyOverloadsWorkCorrectly()
+        {
+            var context = new InstrumentAttribute() { Scopes = InstrumentationScopes.Properties };
+            var targets = InstrumentationDiscoverer.GetInstrumentationSet(typeof(IndexerPropertiesExtended), context);
+
+            // Expecting a single target
+            Assert.AreEqual(4, targets.Count());
+            Assert.AreEqual(typeof(IndexerPropertiesExtended), targets.First().Target.DeclaringType);
+        }
     }
 }
