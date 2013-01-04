@@ -155,7 +155,7 @@ nrconfig /m /i *.NewRelic.xml /o MergedInstrumentation.xml
 
 <ul>
 <li>Generic classes aren't supported</li>
-<li>If a method that takes a generic type as a parameter, which itself has more than one type parameter (like Dictionary, rather than IEnumerable) then all overloads of that method will be instrumented too even if they aren't configured to be - this works around an issue where methods of this type can't be expressed in the configuration file in a way</li>
+<li>If a method that takes a generic type as a parameter, which itself has more than one type parameter (like Dictionary&lt;string, int&gt;, rather than IEnumerable&lt;string&gt;) then all overloads of that method will be instrumented too even if they aren't configured to be - this works around an issue where methods of this type can't be expressed in the configuration file in a way</li>
 </ul><h2>Licence</h2>
 
 <p>nrconfig is licensed under the <a href="http://opensource.org/licenses/BSD-2-Clause">BSD 2-Clause Licence</a>:</p>
