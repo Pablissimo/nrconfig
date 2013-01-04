@@ -105,12 +105,56 @@ namespace NRConfigManager.Rendering
             return serializer.Deserialize(stream) as Extension;
         }
 
-        private static ExactMethodMatcher GetMatcherFromTarget(InstrumentationTarget target)
+        internal static ExactMethodMatcher GetMatcherFromTarget(InstrumentationTarget target)
         {
             string methodName = target.Target.Name;
             ParameterInfo[] parameters = target.Target.GetParameters();
 
-            string[] parameterTypeNames = (parameters ?? Enumerable.Empty<ParameterInfo>()).Select(x => GetFriendlyTypeName(x.ParameterType)).ToArray();
+            string[] parameterTypeNames = null;
+
+            if (target.Target.ContainsGenericParameters)
+            {
+                var method = target.Target;
+                var genericArgs = method.GetGenericArguments();
+
+                // Match up the generic arguments to the parameter types as required
+                List<string> tempParamTypeNames = new List<string>();
+                foreach (var parameter in parameters)
+                {
+                    if (parameter.ParameterType.IsGenericParameter)
+                    {
+                        int matchingIdx = -1;
+                        for (int i = 0; i < genericArgs.Length; i++)
+                        {
+                            var t = genericArgs[i];
+
+                            if (t.Name == parameter.ParameterType.Name)
+                            {
+                                matchingIdx = i;
+                            }
+                        }
+
+                        if (matchingIdx > -1)
+                        {
+                            tempParamTypeNames.Add(string.Format("<MVAR {0}>", matchingIdx));
+                        }
+                        else
+                        {
+                            throw new InvalidOperationException("Can't find the matching generic type parameter for argument " + parameter);
+                        }
+                    }
+                    else
+                    {
+                        tempParamTypeNames.Add(GetFriendlyTypeName(parameter.ParameterType));
+                    }
+                }
+
+                parameterTypeNames = tempParamTypeNames.ToArray();
+            }
+            else
+            {
+                parameterTypeNames = (parameters ?? Enumerable.Empty<ParameterInfo>()).Select(x => GetFriendlyTypeName(x.ParameterType)).ToArray();
+            }            
 
             if (parameters == null || !parameters.Any())
             {

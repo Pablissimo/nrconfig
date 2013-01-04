@@ -151,7 +151,7 @@ namespace NRConfigManager.Infrastructure
 
                 // Instrument everything in this type, irrespective of its member-level
                 // details
-                foreach (MethodInfo methodInfo in t.GetMethods(methodBindingFlags).Where(x => !x.ContainsGenericParameters))
+                foreach (MethodInfo methodInfo in t.GetMethods(methodBindingFlags))
                 {
                     var attr = GetEffectiveInstrumentationContext(methodInfo.GetCustomAttribute(_instAttributeType) as InstrumentAttribute, typeLevelAttribute);
                     if (attr != null && alreadyAdded.Add(methodInfo))
