@@ -46,16 +46,27 @@ namespace NRConfigManager.Rendering
 
                     Func<InstrumentationTarget, Type> typeGetter = x => x.Target.DeclaringType;
                     var byType = groupedByMetric.GroupBy(x => typeGetter(x));
-                    foreach (var groupedByType in byType)
+                    foreach (var groupedByType in byType.OrderBy(x => x.Key.Assembly.FullName).ThenBy(x => x.Key.FullName))
                     {
                         Match match = GetMatchFromType(groupedByType.Key);
 
                         // Each item in the groupedByType enumerable is a method to be instrumented
-                        foreach (var toInstrument in groupedByType)
+                        foreach (var toInstrument in groupedByType.OrderBy(x => x.Target.Name))
                         {
                             ExactMethodMatcher methodMatcher = GetMatcherFromTarget(toInstrument);
                             match.Matches.Add(methodMatcher);
                         }
+
+                        // De-dupe the method matchers, in case we have some parameterless
+                        // entries and some with - as the parameterless ones will take precedence
+                        // anyway, there's no point keeping the others
+                        HashSet<ExactMethodMatcher> toDelete = new HashSet<ExactMethodMatcher>();
+                        foreach (var matcher in match.Matches.Where(x => string.IsNullOrWhiteSpace(x.ParameterTypes)))
+                        {
+                            toDelete.UnionWith(match.Matches.Where(x => x.MethodName == matcher.MethodName && !string.IsNullOrWhiteSpace(x.ParameterTypes)));
+                        }
+
+                        match.Matches.RemoveAll(x => toDelete.Contains(x));
 
                         tracerFactory.MatchDefinitions.Add(match);
                     }
@@ -156,7 +167,17 @@ namespace NRConfigManager.Rendering
                 parameterTypeNames = (parameters ?? Enumerable.Empty<ParameterInfo>()).Select(x => GetFriendlyTypeName(x.ParameterType)).ToArray();
             }            
 
-            if (parameters == null || !parameters.Any())
+            // This is a kludge to compensate for a problem specifying parameters in the instrumentation file
+            // where a parameter is a closed generic with more than one generic type parameter - for example,
+            // Dictionary<string, int> or KeyValuePair<string, string>. To get around the problem, if we detect
+            // such a method, we'll just output a parameterless matcher definition. This has the negative side-effect
+            // that we'll inadvertently instrument all overloads of the method (if any exist), even if they don't
+            // match our instrumentation criteria
+            if (parameters != null && parameters.Any(x => x.ParameterType.IsGenericType && x.ParameterType.GetGenericArguments().Count() > 1))
+            {
+                parameterTypeNames = new string[0];
+            }
+            else if (parameters == null || !parameters.Any())
             {
                 parameterTypeNames = new[]{ "void" };
             }

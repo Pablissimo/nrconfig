@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,14 +16,16 @@ namespace NRConfigManager.Rendering
         [XmlAttribute(AttributeName="methodName")]
         public string MethodName { get; set; }
         [XmlAttribute(AttributeName="parameters")]
+        [DefaultValue("")]
         public string ParameterTypes { get; set; }
 
         public ExactMethodMatcher()
         {
-
+            this.ParameterTypes = string.Empty;
         }
 
         public ExactMethodMatcher(string methodName, string[] parameterTypes)
+            : this()
         {
             this.MethodName = methodName;
             if (parameterTypes != null && parameterTypes.Any())

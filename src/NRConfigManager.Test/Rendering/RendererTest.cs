@@ -80,5 +80,22 @@ namespace NRConfigManager.Test.Rendering
             Assert.AreEqual("MixedMethod", matcher.MethodName);
             Assert.AreEqual("<MVAR 0>,System.String,<MVAR 1>", matcher.ParameterTypes);
         }
+
+        [TestMethod]
+        public void GetMatcherFromTarget_ClearsParameters_WhenComplexGenericTypeIsAnyMethodParameter()
+        {
+            var targets =
+                InstrumentationDiscoverer
+                .GetInstrumentationSet(typeof(GenericsTest))
+                .Where(x => x.Target.Name == "GenericParametersMethod");
+
+            Assert.IsNotNull(targets);
+
+            var simpleMatcher = Renderer.GetMatcherFromTarget(targets.First(x => x.Target.GetParameters().First().ParameterType == typeof(IEnumerable<string>)));
+            var complexMatcher = Renderer.GetMatcherFromTarget(targets.First(x => x.Target.GetParameters().First().ParameterType == typeof(KeyValuePair<string, string>)));
+
+            Assert.AreEqual("System.Collections.Generic.IEnumerable`1<System.String>", simpleMatcher.ParameterTypes);
+            Assert.AreEqual(string.Empty, complexMatcher.ParameterTypes);
+        }
     }
 }

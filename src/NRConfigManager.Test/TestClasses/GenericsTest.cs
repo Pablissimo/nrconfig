@@ -29,5 +29,15 @@ namespace NRConfigManager.Test.TestClasses
         {
 
         }
+
+        public void GenericParametersMethod(IEnumerable<string> stringEnumerable)
+        {
+
+        }
+
+        public void GenericParametersMethod(KeyValuePair<string, string> kvp)
+        {
+
+        }
     }
 }
