@@ -37,7 +37,12 @@
 
 <p><strong>Note</strong> I'm not affiliated with New Relic, Inc beyond being a happy customer of theirs and this tool is in no way endorsed or sanctioned by them. If there are issues with the tool or questions about the source, come to me and not their (lovely) support team as they'll not know what you're talking about.</p>
 
-<h2>Quickstart from NuGet</h2>
+<h2>Availability</h2>
+
+<ul>
+<li>NuGet (see below)</li>
+<li>Direct download - <a href="http://pablissimo.com/nrconfig/nrconfig.zip">the tool itself</a>, and the <a href="http://pablissimo.com/nrconfig/nrconfiglibrary.zip">library containing the attribute you can mark your classes and methods up with</a> (optional)</li>
+</ul><h2>Quickstart from NuGet</h2>
 
 <p>Minimally, grab the NRConfig.Tool NuGet package:</p>
 
@@ -51,14 +56,14 @@
 
 <p>Then mark up your classes or methods with [NRConfig.Instrument] attributes before adding a post-build step for your project:</p>
 
-<pre><code>nrconfig.exe /i $(TargetPath) /o $(TargetDir)$(TargetName).NewRelic.xml
+<pre><code>$(SolutionDir)packages\NRConfig.Tool.1.0.0.0\tools\nrconfig.exe /f all /i $(TargetPath) /o $(TargetDir)$(TargetName).NewRelic.xml
 </code></pre>
 
 <h3>Don't need fine-grained control?</h3>
 
 <p>If you don't need method-level specificity, you can use the /f flag in the post-build step (flags are described below):</p>
 
-<pre><code>nrconfig.exe /i $(TargetPath) /f all /o $(TargetDir)$(TargetName).NewRelic.xml
+<pre><code>$(SolutionDir)packages\NRConfig.Tool.1.0.0.0\tools\nrconfig.exe /i $(TargetPath) /o $(TargetDir)$(TargetName).NewRelic.xml
 </code></pre>
 
 <h2>Usage</h2>
