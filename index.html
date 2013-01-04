@@ -35,7 +35,7 @@
 
 <p>nrconfig is a command-line tool intended to support creating and maintaining <a href="https://newrelic.com/docs/dotnet/CustomInstrumentation.html">custom instrumentation</a> files for use by New Relic.</p>
 
-<p><strong>Note</strong> I'm not affiliated with New Relic, Inc beyond being a happy customer of theirs and this tool is in no way endorsed by them. If there are issues with the tool or questions about the source, come to me and not their (lovely) support team as they'll not know what you're talking about.</p>
+<p><strong>Note</strong> I'm not affiliated with New Relic, Inc beyond being a happy customer of theirs and this tool is in no way endorsed or sanctioned by them. If there are issues with the tool or questions about the source, come to me and not their (lovely) support team as they'll not know what you're talking about.</p>
 
 <h2>Quickstart from NuGet</h2>
 
@@ -72,7 +72,9 @@
 <li>Annotate at the assembly, class or method level with the [Instrument] attribute</li>
 <li>Install the NRConfig.Tool NuGet package</li>
 <li>Run nrconfig.exe against the assemblies in question</li>
-</ul><pre><code>nrconfig /i *.dll
+</ul><p><strong>Note</strong> See the Limitations section at the end for important caveats about this approach.</p>
+
+<pre><code>nrconfig /i *.dll
 </code></pre>
 
 <h3>Generate instrumentation files for unadorned assemblies</h3>
@@ -147,7 +149,14 @@ nrconfig /m /i *.NewRelic.xml /o MergedInstrumentation.xml
 
 <p>Extra-verbose mode, generates a lot of console output but useful if you're about to report a bug.</p>
 
-<h2>Licence</h2>
+<h2>Limitations</h2>
+
+<p>There are a few quirks of the output to deal with issues around New Relic's profiler and its handling of generics:</p>
+
+<ul>
+<li>Generic classes aren't supported</li>
+<li>If a method that takes a generic type as a parameter, which itself has more than one type parameter (like Dictionary, rather than IEnumerable) then all overloads of that method will be instrumented too even if they aren't configured to be - this works around an issue where methods of this type can't be expressed in the configuration file in a way</li>
+</ul><h2>Licence</h2>
 
 <p>nrconfig is licensed under the <a href="http://opensource.org/licenses/BSD-2-Clause">BSD 2-Clause Licence</a>:</p>
 
