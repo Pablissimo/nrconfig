@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using System.Text.RegularExpressions;
 
 namespace NewRelicConfigBuilder
 {
@@ -259,7 +260,13 @@ namespace NewRelicConfigBuilder
                         }
                     }
 
-                    var toAdd = InstrumentationDiscoverer.GetInstrumentationSet(assy, assemblyAttribute);
+                    Predicate<Type> filter = null;
+                    if (args.WhereTypeFullNameLike != null && args.WhereTypeFullNameLike.Any())
+                    {
+                        filter = MakeFilterFromWildcards(args.WhereTypeFullNameLike);
+                    }
+
+                    var toAdd = InstrumentationDiscoverer.GetInstrumentationSet(assy, assemblyAttribute, filter);
                     if (args.Verbose)
                     {
                         Console.WriteLine("Processed {0} targets from {1}", toAdd.Count(), assy.FullName);
@@ -297,6 +304,22 @@ namespace NewRelicConfigBuilder
                 ErrorOut("Failed to process instrumentation: {0}", ex, args.Verbose || args.VeryVerbose);
                 return -1;
             }
+        }
+
+        private static Predicate<Type> MakeFilterFromWildcards(string[] filters)
+        {
+            List<Regex> regexes = new List<Regex>();
+            foreach (var filter in filters)
+            {
+                // http://www.codeproject.com/Articles/11556/Converting-Wildcards-to-Regexes
+                string safe = Regex.Escape(filter);
+                regexes.Add(new Regex("^" + safe.Replace(@"\*", ".*").Replace(@"\?", ".?") + "$", RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline | RegexOptions.Compiled));
+            }
+
+            return delegate(Type t)
+            {
+                return regexes.Any(r => r.Match(t.FullName).Success);
+            };
         }
 
         private static void ErrorOut(string message, Exception ex, bool verbose)

@@ -17,55 +17,31 @@ namespace NRConfigManager.Infrastructure
     {
         private static ILog _logger = LogManager.GetLogger(typeof(InstrumentationDiscoverer));
         private static Type _instAttributeType = typeof(InstrumentAttribute);
-
-        /// <summary>
-        /// Gets the set of instrumentation targets detected within the specified assemblies.
-        /// </summary>
-        /// <param name="assemblies">The assemblies to be examined.</param>
-        /// <returns>The set of target methods within the assemblies that have been marked as
-        /// instrumentable.</returns>
-        public static IEnumerable<InstrumentationTarget> GetInstrumentationSet(IEnumerable<Assembly> assemblies)
-        {
-            List<InstrumentationTarget> toReturn = new List<InstrumentationTarget>();
-
-            foreach (Assembly assy in assemblies)
-            {
-                toReturn.AddRange(GetInstrumentationSet(assy));
-            }
-
-            return toReturn;
-        }
-
-        /// <summary>
-        /// Gets the set of instrumentation targets detected within a single assembly.
-        /// </summary>
-        /// <param name="assy">The assembly to be examined.</param>
-        /// <returns>The set of target methods within the assembly that have been marked as
-        /// instrumentable.</returns>
-        public static IEnumerable<InstrumentationTarget> GetInstrumentationSet(Assembly assy)
-        {
-            InstrumentAttribute context = assy.GetCustomAttribute(typeof(InstrumentAttribute)) as InstrumentAttribute;
-            return GetInstrumentationSet(assy, context);
-        }
-
+        
         /// <summary>
         /// Gets the set of instrumentation targets detected within a single assembly, filtered using the
         /// specified context.
         /// </summary>
         /// <param name="assy">The assembly to be examined.</param>
         /// <param name="context">The context in which the search for instrumentable methods should take place.</param>
+        /// <param name="typeFilter">A predicate that returns true for types that should be included in the output.</param>
         /// <returns>The set of target methods within the assembly that have been marked as 
         /// instrumentable.</returns>
-        public static IEnumerable<InstrumentationTarget> GetInstrumentationSet(Assembly assy, InstrumentAttribute context)
+        public static IEnumerable<InstrumentationTarget> GetInstrumentationSet(Assembly assy, InstrumentAttribute context, Predicate<Type> typeFilter)
         {
             List<InstrumentationTarget> toReturn = new List<InstrumentationTarget>();
 
             _logger.InfoFormat("Processing assembly {0}", assy.FullName);
+            
+            if (typeFilter == null)
+            {
+                typeFilter = x => true;
+            }
 
-            var allTypes = assy.GetTypes().Where(x => !x.IsNested);
+            var allTypes = assy.GetTypes().Where(x => !x.IsNested && x.IsClass && typeFilter(x));
             _logger.DebugFormat("Found {0} types in assembly {1}", allTypes.Count(), assy.FullName);
 
-            foreach (Type t in allTypes.Where(x => x.IsClass))
+            foreach (Type t in allTypes)
             {
                 toReturn.AddRange(GetInstrumentationSet(t, context));
             }

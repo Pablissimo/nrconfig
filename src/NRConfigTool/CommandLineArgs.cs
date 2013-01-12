@@ -45,6 +45,12 @@ namespace NewRelicConfigBuilder
         [Description("Indicates that the process should try to continue even in the event of a failure")]
         public bool ContinueOnFailure { get; set; }
 
+        [CmdLineArg(Alias = "w", Required = false)]
+        [Description("Specifies one or more additional filters on fully-qualified type names to be included from the "
+            + "assemblies to be processed - valid only with the /f flag. For example, MyProject.Repositories.* will match "
+            + "all classes in the MyProject.Repositories namespace, while MyProject.MyType will match a single type.")]
+        public string[] WhereTypeFullNameLike { get; set; }
+
         [CmdLineArg(Alias = "f", Required = false)]
         [Description("Generates a custom instrumentation file for the specified assemblies even if they haven't been annotated with "
             + "Instrument attributes. Specify a combination of items from the set {all, properties, methods, constructors}, and indicate "
