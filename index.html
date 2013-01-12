@@ -141,7 +141,14 @@ nrconfig /m /i *.NewRelic.xml /o MergedInstrumentation.xml
 <li>constructors</li>
 </ul><p>and each can be immediately followed by + or - (or both) signifying public or non-public respectively. If neither + nor - is specified, + is assumed.</p>
 
-<h4>/m</h4>
+<h4>/w &lt;typename_1&gt; ... [typename_n]</h4>
+
+<p>Specifies that only types whose full names match those specified should be included - only used in conjunction with /f flag. Supports wildcards, for example:</p>
+
+<ul>
+<li>*Repository would match all types whose full name ends with 'Repository'</li>
+<li>System.Web.* would match all types in the System.Web namespace</li>
+</ul><h4>/m</h4>
 
 <p>Merges input instrumentation files into a single output file.</p>
 
