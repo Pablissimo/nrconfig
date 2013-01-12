@@ -56,14 +56,14 @@
 
 <p>Then mark up your classes or methods with [NRConfig.Instrument] attributes before adding a post-build step for your project:</p>
 
-<pre><code>$(SolutionDir)packages\NRConfig.Tool.1.2.0.0\tools\nrconfig.exe /f all /i $(TargetPath) /o $(TargetDir)$(TargetName).NewRelic.xml
+<pre><code>$(SolutionDir)packages\NRConfig.Tool.1.3.0.0\tools\nrconfig.exe /f all /i $(TargetPath) /o $(TargetDir)$(TargetName).NewRelic.xml
 </code></pre>
 
 <h3>Don't need fine-grained control?</h3>
 
 <p>If you don't need method-level specificity, you can use the /f flag in the post-build step (flags are described below):</p>
 
-<pre><code>$(SolutionDir)packages\NRConfig.Tool.1.2.0.0\tools\nrconfig.exe /i $(TargetPath) /o $(TargetDir)$(TargetName).NewRelic.xml
+<pre><code>$(SolutionDir)packages\NRConfig.Tool.1.3.0.0\tools\nrconfig.exe /i $(TargetPath) /o $(TargetDir)$(TargetName).NewRelic.xml
 </code></pre>
 
 <h2>Usage</h2>
