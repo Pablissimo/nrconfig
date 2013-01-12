@@ -80,6 +80,12 @@ Specifies that all methods, constructors and properties matched by the filters s
 
 and each can be immediately followed by + or - (or both) signifying public or non-public respectively. If neither + nor - is specified, + is assumed.
 
+#### /w &lt;typename_1&gt; ... [typename_n]
+Specifies that only types whose full names match those specified should be included - only used in conjunction with /f flag. Supports wildcards, for example:
+
+* *Repository would match all types whose full name ends with 'Repository'
+* System.Web.* would match all types in the System.Web namespace
+
 #### /m
 Merges input instrumentation files into a single output file.
 
