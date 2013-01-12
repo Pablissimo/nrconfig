@@ -62,7 +62,7 @@ namespace NRConfigManager.Infrastructure
 
             _logger.InfoFormat("Processing assembly {0}", assy.FullName);
 
-            var allTypes = assy.GetTypes();
+            var allTypes = assy.GetTypes().Where(x => !x.IsNested);
             _logger.DebugFormat("Found {0} types in assembly {1}", allTypes.Count(), assy.FullName);
 
             foreach (Type t in allTypes.Where(x => x.IsClass))
