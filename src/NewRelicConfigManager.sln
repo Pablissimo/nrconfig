@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2012 for Windows Desktop
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NRConfigManager", "NRConfigManager\NRConfigManager.csproj", "{C93B069A-DA84-4FCB-BD39-FC1A59CDD03B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NRConfig", "NRConfig\NRConfig.csproj", "{33536E8A-988A-4C6F-97CC-B708C8DE2978}"
@@ -62,7 +62,6 @@ Global
 		{EF3432FB-DA8F-4016-B0DA-AE2509219EFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF3432FB-DA8F-4016-B0DA-AE2509219EFC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FB49A188-9E09-4746-AAE7-7B3B47640237}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FB49A188-9E09-4746-AAE7-7B3B47640237}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB49A188-9E09-4746-AAE7-7B3B47640237}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB49A188-9E09-4746-AAE7-7B3B47640237}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection

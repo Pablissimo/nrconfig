@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <Content Include="ILMerge.exe" />
     <Content Include="merge.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -80,7 +81,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <PropertyGroup>
-    <PostBuildEvent>ilmerge /ndebug /targetplatform:v4,C:\windows\microsoft.net\framework\v4.0.30319 /out:$(TargetDir)nrconfig.exe $(TargetDir)NRConfigTool.exe $(TargetDir)BizArk.Core.dll $(TargetDir)log4net.dll $(TargetDir)NRConfig.dll $(TargetDir)NRConfigManager.dll</PostBuildEvent>
+    <PostBuildEvent>$(ProjectDir)ilmerge /ndebug /targetplatform:v4,C:\windows\microsoft.net\framework\v4.0.30319 /out:$(TargetDir)nrconfig.exe $(TargetDir)NRConfigTool.exe $(TargetDir)BizArk.Core.dll $(TargetDir)log4net.dll $(TargetDir)NRConfig.dll $(TargetDir)NRConfigManager.dll</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
