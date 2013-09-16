@@ -24,6 +24,25 @@ namespace NRConfig
         /// should proceed from this point forward.
         /// </summary>
         public InstrumentationScopes Scopes { get; set; }
+        /// <summary>
+        /// Gets or sets whether classes or methods marked with the 'CompilerGenerated' attribute
+        /// should be included. If not specified the value is inherited.
+        /// </summary>
+        private bool _includeCompilerGeneratedCode;
+        public bool IncludeCompilerGeneratedCode
+        {
+            get
+            {
+                return _includeCompilerGeneratedCode;
+            }
+            set
+            {
+                _includeCompilerGeneratedCode = value;
+                this.IncludeCompilerGeneratedCodeSet = true;
+            }
+        }
+
+        public bool IncludeCompilerGeneratedCodeSet { get; private set; }
 
         public InstrumentAttribute()
             : this(null)

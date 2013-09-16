@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 
 namespace NRConfigManager.Infrastructure
 {
@@ -60,6 +61,37 @@ namespace NRConfigManager.Infrastructure
             return GetInstrumentationSet(t, null);
         }
 
+        private static InstrumentAttribute GetAttributeFromType(Type t)
+        {
+            // Since we might have assy version differences, we're stuck buggering about with reflection
+            Attribute matchingAttribute = t.GetCustomAttributes().FirstOrDefault(x => x.GetType().Name.EndsWith("InstrumentAttribute"));
+
+            InstrumentAttribute toReturn = null;
+
+            if (matchingAttribute != null)
+            {
+                toReturn = new InstrumentAttribute();
+                Type matchingAttributeType = matchingAttribute.GetType();
+                foreach (var prop in matchingAttributeType.GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance))
+                {
+                    PropertyInfo equivalentProperty = typeof(InstrumentAttribute).GetProperty(prop.Name);
+                    if (equivalentProperty != null)
+                    {
+                        if (prop.PropertyType.IsEnum)
+                        {
+                            equivalentProperty.SetValue(toReturn, Convert.ToInt32(prop.GetValue(matchingAttribute)));
+                        }
+                        else
+                        {
+                            equivalentProperty.SetValue(toReturn, prop.GetValue(matchingAttribute));
+                        }
+                    }
+                }
+            }
+
+            return toReturn;
+        }
+
         /// <summary>
         /// Gets the set of instrumentation targets detected within a single type, including any nested types, 
         /// filtered using the specified context.
@@ -74,14 +106,22 @@ namespace NRConfigManager.Infrastructure
 
             if (!t.IsGenericTypeDefinition)
             {
-                _logger.DebugFormat("Processing type {0}", t.FullName);
-
                 HashSet<MethodBase> alreadyAdded = new HashSet<MethodBase>();
 
                 // Does the type have an Instrument attribute?
-                var typeLevelAttribute = t.GetCustomAttribute(_instAttributeType, false) as InstrumentAttribute;
+                var typeLevelAttribute = GetAttributeFromType(t);
                 typeLevelAttribute = GetEffectiveInstrumentationContext(typeLevelAttribute, context);
 
+                if (t.GetCustomAttribute(typeof(CompilerGeneratedAttribute)) != null && (typeLevelAttribute == null || !typeLevelAttribute.IncludeCompilerGeneratedCode))
+                {
+                    // Bail out early - we've found a compiler-generated method and haven't been told to include 'em
+                    _logger.DebugFormat("Skipping type {0} - compiler-generated and configuration set to skip", t.FullName);
+
+                    return toReturn;
+                }
+                
+                _logger.DebugFormat("Processing type {0}", t.FullName);
+                
                 var baseBindingFlags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
                 var propBindingFlags = baseBindingFlags;
                 var methodBindingFlags = baseBindingFlags;
@@ -132,7 +172,7 @@ namespace NRConfigManager.Infrastructure
                     _logger.DebugFormat("Examining method {0}", methodInfo.ToString());
 
                     var attr = GetEffectiveInstrumentationContext(methodInfo.GetCustomAttribute(_instAttributeType, false) as InstrumentAttribute, typeLevelAttribute);
-                    if (attr != null && alreadyAdded.Add(methodInfo))
+                    if (attr != null && (methodInfo.GetCustomAttribute(typeof(CompilerGeneratedAttribute)) == null || (attr.IncludeCompilerGeneratedCode)) && alreadyAdded.Add(methodInfo))
                     {
                         toReturn.Add(GetInstrumentationTarget(methodInfo, attr));
                     }
@@ -243,7 +283,7 @@ namespace NRConfigManager.Infrastructure
         {
             // Working through the array, assuming that the top-most items are the most important
             InstrumentAttribute toReturn = new InstrumentAttribute();
-            bool setMetricName = false, setMetric = false, setScopes = false;
+            bool setMetricName = false, setMetric = false, setScopes = false, setIncludeCompilerGenerated = false;
             
             foreach (var attr in attrs)
             {
@@ -272,6 +312,12 @@ namespace NRConfigManager.Infrastructure
                 {
                     toReturn.Scopes = attr.Scopes;
                     setScopes = true;
+                }
+
+                if (attr.IncludeCompilerGeneratedCodeSet && !setIncludeCompilerGenerated)
+                {
+                    toReturn.IncludeCompilerGeneratedCode = attr.IncludeCompilerGeneratedCode;
+                    setIncludeCompilerGenerated = true;
                 }
             }
 

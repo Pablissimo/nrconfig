@@ -62,6 +62,12 @@ namespace NewRelicConfigBuilder
             + "Instrument attributes as normal.")]
         public string[] ForceIfNotMarkedUp { get; set; }
 
+        [CmdLineArg(Alias = "g", Required = false)]
+        [Description("Specifies that code marked with the CompilerGenerated attribute, normally ignored, should "
+            + "be included when detecting instrumentable methods. This defaults to off to avoid instrumenting the many "
+            + "anonymous types that are generated when dealing with lambda expressions.")]
+        public bool? IncludeCompilerGeneratedCode { get; set; }
+
         public bool ForceIfNotMarkedUpValid
         {
             get

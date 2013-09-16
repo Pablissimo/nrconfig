@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 
 namespace NRConfigManager.Test.TestClasses
 {
@@ -72,6 +73,11 @@ namespace NRConfigManager.Test.TestClasses
         public void MultiParameterFunction(string stringParam, byte[] byteArrayParam)
         {
 
+        }
+
+        [CompilerGenerated]
+        public void CompilerGeneratedMethod()
+        {
         }
 
         public class Nested

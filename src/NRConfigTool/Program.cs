@@ -240,6 +240,10 @@ namespace NewRelicConfigBuilder
                 if (args.ForceIfNotMarkedUpValid)
                 {
                     assemblyAttribute = new InstrumentAttribute() { Scopes = args.ForceIfNotMarkedUpValidScopes };
+                    if (args.IncludeCompilerGeneratedCode.HasValue)
+                    {
+                        assemblyAttribute.IncludeCompilerGeneratedCode = args.IncludeCompilerGeneratedCode.Value;
+                    }
                 }
 
                 List<InstrumentationTarget> targets = new List<InstrumentationTarget>();

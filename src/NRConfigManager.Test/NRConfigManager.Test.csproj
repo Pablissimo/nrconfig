@@ -34,6 +34,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>NRConfig.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
   </ItemGroup>
@@ -55,7 +61,9 @@
     <Compile Include="Rendering\ExtensionTest.cs" />
     <Compile Include="Rendering\RendererTest.cs" />
     <Compile Include="TestClasses\ClassLevelImplicitMarkup.cs" />
+    <Compile Include="TestClasses\CompilerGeneratedClass.cs" />
     <Compile Include="TestClasses\ExplicitMarkup.cs" />
+    <Compile Include="TestClasses\ExplicitMarkupCompilerGeneratedClass.cs" />
     <Compile Include="TestClasses\GenericsTest.cs" />
     <Compile Include="TestClasses\HidingMethods.cs" />
     <Compile Include="TestClasses\HidingProperties.cs" />
@@ -71,6 +79,9 @@
       <Project>{33536e8a-988a-4c6f-97cc-b708c8de2978}</Project>
       <Name>NRConfig</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="NRConfig.snk" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

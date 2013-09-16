@@ -204,5 +204,33 @@ namespace NRConfigManager.Test.Infrastructure
             Assert.AreEqual(4, targets.Count());
             Assert.AreEqual(typeof(IndexerPropertiesExtended), targets.First().Target.DeclaringType);
         }
+
+        [TestMethod]
+        public void InstrumentationTest_CompilerGeneratedClasses_IgnoredByDefault()
+        {
+            var context = new InstrumentAttribute();
+            var targets = InstrumentationDiscoverer.GetInstrumentationSet(typeof(ClassLevelImplicitMarkup), context);
+
+            Assert.IsFalse(targets.Any(x => x.Target.Name == "CompilerGeneratedMethod"));
+        }
+
+        [TestMethod]
+        public void InstrumentationTest_CompilerGeneratedClasses_IncludedIfExplicitlyRequested()
+        {
+            var context = new InstrumentAttribute() { IncludeCompilerGeneratedCode = true };
+            var targets = InstrumentationDiscoverer.GetInstrumentationSet(typeof(ClassLevelImplicitMarkup), context);
+
+            Assert.IsTrue(targets.Any(x => x.Target.Name == "CompilerGeneratedMethod"));
+        }
+
+        [TestMethod]
+        public void InstrumentationTest_CompilerGeneratedMethods_IncludedIfRequestedAtEnclosingClassLevel()
+        {
+            // Explicit requirement here will be overruled by the class-level Instrument attribute
+            var context = new InstrumentAttribute() { Scopes = InstrumentationScopes.PublicMethods, IncludeCompilerGeneratedCode = false };
+            var targets = InstrumentationDiscoverer.GetInstrumentationSet(typeof(ExplicitMarkupCompilerGeneratedClass), context);
+
+            Assert.IsTrue(targets.Any(x => x.Target.Name == "CompilerGeneratedMethod"));
+        }
     }
 }

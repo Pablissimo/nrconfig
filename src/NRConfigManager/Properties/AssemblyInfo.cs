@@ -32,7 +32,7 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyFileVersion("1.2.0.0")]
+[assembly: AssemblyVersion("1.2.1.0")]
+[assembly: AssemblyFileVersion("1.2.1.0")]
 
-[assembly: InternalsVisibleTo("NRConfigManager.Test")]
+[assembly: InternalsVisibleTo("NRConfigManager.Test, PublicKey=0024000004800000940000000602000000240000525341310004000001000100c13c5be901f387bd666ed3ca41a541205d46f2a41701ea55c33cd6fdcad516e17c96a2bfe9671696eb19c7bbc5ce3724619ffe0a54f70a263eb24a6bfd343f9ac51683bf18d60611390406b627db417fa288e21e14f14456932133b086ddd73ffe1bc1daecd83b307bf7a3f8f7d88ef0e0a248094143dd4fc2eef6f6403280e0")]

@@ -1,13 +1,18 @@
 ﻿NRConfig Library - http://pablissimo.github.com/nrconfig
 =====================================================
 
+
+IMPORTANT! Upgrading from 1.2.0? You'll also need to update NRConfig.Tool to the latest version.
+
+
+
 Provides your project with the [NRConfig.Instrument] attribute that in combination
 with the nrconfig.exe tool (separate NuGet package, search 'NRConfig Tool').
 
 Install the NRConfig.Tool package, mark up your classes and methods then add
 a post-build step to your project:
 
-$(SolutionDir)packages\NRConfig.Tool.1.2.0.0\tools\nrconfig.exe /f all /i $(TargetPath) /o $(TargetDir)$(TargetName).NewRelic.xml
+$(SolutionDir)packages\NRConfig.Tool.1.2.1.0\tools\nrconfig.exe /f all /i $(TargetPath) /o $(TargetDir)$(TargetName).NewRelic.xml
 
 or run the tool manually as required.
 
