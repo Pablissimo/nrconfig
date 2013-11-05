@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using System.Text.RegularExpressions;
+using NRConfigTool;
 
 namespace NewRelicConfigBuilder
 {
@@ -235,73 +236,25 @@ namespace NewRelicConfigBuilder
             try
             {
                 IEnumerable<string> inputPaths = GetInputFiles(args);
+                string outputPath = "CustomInstrumentation.xml";
 
-                InstrumentAttribute assemblyAttribute = null;
+                if (!string.IsNullOrWhiteSpace(args.OutputFile))
+                {
+                    outputPath = args.OutputFile;
+                }
+
+                var generator = new CustomInstrumentationGenerator(inputPaths, outputPath);
                 if (args.ForceIfNotMarkedUpValid)
                 {
-                    assemblyAttribute = new InstrumentAttribute() { Scopes = args.ForceIfNotMarkedUpValidScopes };
-                    if (args.IncludeCompilerGeneratedCode.HasValue)
-                    {
-                        assemblyAttribute.IncludeCompilerGeneratedCode = args.IncludeCompilerGeneratedCode.Value;
-                    }
+                    generator.AutomaticInstrumentationScopes = args.ForceIfNotMarkedUpValidScopes;
                 }
 
-                List<InstrumentationTarget> targets = new List<InstrumentationTarget>();
+                generator.ContinueOnFailure = args.ContinueOnFailure;
+                generator.IncludeCompilerGeneratedCode = args.IncludeCompilerGeneratedCode ?? false;
 
-                foreach (string assyPath in inputPaths)
-                {
-                    Assembly assy = null;
-                    try
-                    {
-                        assy = Assembly.LoadFrom(assyPath);
-                    }
-                    catch (Exception ex)
-                    {
-                        ErrorOut(string.Format("Failed to load assembly from {0}: {{0}}", assyPath), ex, args.Verbose || args.VeryVerbose);
-                        if (!args.ContinueOnFailure)
-                        {
-                            return -1;
-                        }
-                    }
+                bool result = generator.Execute();
 
-                    Predicate<Type> filter = null;
-                    if (args.WhereTypeFullNameLike != null && args.WhereTypeFullNameLike.Any())
-                    {
-                        filter = MakeFilterFromWildcards(args.WhereTypeFullNameLike);
-                    }
-
-                    var toAdd = InstrumentationDiscoverer.GetInstrumentationSet(assy, assemblyAttribute, filter);
-                    if (args.Verbose)
-                    {
-                        Console.WriteLine("Processed {0} targets from {1}", toAdd.Count(), assy.FullName);
-                    }
-
-                    targets.AddRange(toAdd);
-                }
-
-                Console.WriteLine("Processed {0} targets", targets.Count);
-
-                if (targets.Count > MAX_TARGETS_BEFORE_WARNING)
-                {
-                    Console.WriteLine("WARNING - New Relic recommend instrumenting no more than {0} targets to avoid performance issues.", MAX_TARGETS_BEFORE_WARNING);
-                    Console.WriteLine("See https://newrelic.com/docs/dotnet/CustomInstrumentation.html for more information");
-                }
-
-                string tempPath = Path.GetTempFileName();
-                using (FileStream w = new FileStream(tempPath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None))
-                {
-                    Renderer.RenderToStream(targets, w);
-                }
-
-                // Delete existing file, if required
-                if (File.Exists(args.OutputFile))
-                {
-                    File.Delete(args.OutputFile);
-                }
-
-                File.Move(tempPath, args.OutputFile);
-
-                return 0;
+                return result ? 0 : -1;
             }
             catch (Exception ex)
             {
