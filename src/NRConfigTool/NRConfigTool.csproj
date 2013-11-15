@@ -61,6 +61,7 @@
   <ItemGroup>
     <Compile Include="CommandLineArgs.cs" />
     <Compile Include="CustomInstrumentationGenerator.cs" />
+    <Compile Include="NewRelicCustomInstrumentationFileMergeTask.cs" />
     <Compile Include="NewRelicCustomInstrumentationFileTask.cs" />
     <Compile Include="OperationMode.cs" />
     <Compile Include="Program.cs" />

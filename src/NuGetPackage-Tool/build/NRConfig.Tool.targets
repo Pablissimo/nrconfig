@@ -1,12 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <UsingTask AssemblyFile="..\tools\nrconfig.exe" TaskName="NewRelicCustomInstrumentationFileTask" />
+  <UsingTask AssemblyFile="..\tools\nrconfig.exe" TaskName="NewRelicCustomInstrumentationFileMergeTask" />
 
   <Target Name="GenerateNewRelicCustomInstrumentationFile" AfterTargets="Build">
     <Message Text="Generating New Relic custom instrumentation files" />
 
-    <NewRelicCustomInstrumentationFileTask InputFiles="$(TargetPath)" OutputFile="$(OutputPath)CustomInstrumentation.xml">
-      
-    </NewRelicCustomInstrumentationFileTask>
+    <NewRelicCustomInstrumentationFileTask InputFiles="$(TargetPath)" OutputFile="$(TargetDir)$(TargetName).CustomInstrumentation.xml" />
+    <NewRelicCustomInstrumentationFileMergeTask InputFilter="$(TargetDir)*.CustomInstrumentation.xml" OutputFile="$(TargetDir)CustomInstrumentation.xml" />
   </Target>
+  
+  <PropertyGroup>
+    <AllowedReferenceRelatedFileExtensions>
+      $(AllowedReferenceRelatedFileExtensions);
+      .CustomInstrumentation.xml
+    </AllowedReferenceRelatedFileExtensions>
+  </PropertyGroup>
 </Project>
