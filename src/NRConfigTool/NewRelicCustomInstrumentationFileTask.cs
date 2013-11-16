@@ -4,11 +4,15 @@ using System.Linq;
 using System.Text;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using NRConfigTool.Logging;
+using log4net;
 
 namespace NRConfigTool
 {
     public class NewRelicCustomInstrumentationFileTask : AppDomainIsolatedTask
     {
+        ILog _logger = LogManager.GetLogger(typeof(NewRelicCustomInstrumentationFileMergeTask));
+
         [Required]
         public ITaskItem[] InputFiles { get; set; }
 
@@ -17,6 +21,8 @@ namespace NRConfigTool
 
         public override bool Execute()
         {
+            LogConfigurator.Configure(true, true, new BuildTaskLogAppender(this.Log));
+
             var toReturn = true;
 
             if (this.InputFiles != null && this.InputFiles.Any())
@@ -44,7 +50,7 @@ namespace NRConfigTool
                 }
                 catch (Exception ex)
                 {
-                    Log.LogErrorFromException(ex);
+                    _logger.Error(ex);
                     toReturn = false;
                 }
             }

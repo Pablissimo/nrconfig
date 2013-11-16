@@ -62,6 +62,8 @@
     <Compile Include="CommandLineArgs.cs" />
     <Compile Include="CustomInstrumentationGenerator.cs" />
     <Compile Include="CustomInstrumentationMerger.cs" />
+    <Compile Include="Logging\BuildTaskLogAppender.cs" />
+    <Compile Include="Logging\LogConfigurator.cs" />
     <Compile Include="NewRelicCustomInstrumentationFileMergeTask.cs" />
     <Compile Include="NewRelicCustomInstrumentationFileTask.cs" />
     <Compile Include="OperationMode.cs" />

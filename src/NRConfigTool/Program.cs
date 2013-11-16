@@ -1,30 +1,16 @@
-﻿using BizArk.Core.CmdLine;
-using NRConfigManager.Configuration;
-using NRConfigManager.Infrastructure;
-using NRConfigManager.Rendering;
-using NRConfigManager.Test.TestClasses;
-using NRConfig;
+﻿using log4net;
+using NRConfigTool;
+using NRConfigTool.Logging;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
 using System.Text.RegularExpressions;
-using NRConfigTool;
 
 namespace NewRelicConfigBuilder
 {
     class Program
     {
-        const int VERBOSITY_NORMAL = 0;
-        const int VERBOSITY_VERBOSE = 1;
-        const int VERBOSITY_DEBUG = 2;
-
         const int MAX_TARGETS_BEFORE_WARNING = 2000;
 
         const int RETURN_FAILURE = -1;
@@ -53,17 +39,7 @@ namespace NewRelicConfigBuilder
                 return Environment.ExitCode = RETURN_FAILURE;
             }
 
-            int verbosity = VERBOSITY_NORMAL;
-            if (parsedArgs.VeryVerbose)
-            {
-                verbosity = VERBOSITY_DEBUG;
-            }
-            else if (parsedArgs.Verbose)
-            {
-                verbosity = VERBOSITY_NORMAL;
-            }
-
-            ConfigureLogging(verbosity);
+            LogConfigurator.Configure(parsedArgs.Verbose || parsedArgs.VeryVerbose, parsedArgs.VeryVerbose);
 
             var mode = OperationMode.Create;
             if (parsedArgs.MergeInputs)
@@ -125,30 +101,6 @@ namespace NewRelicConfigBuilder
             log4net.LogManager.GetLogger(typeof(Program)).Fatal("Unhandled exception during operation - try running with /v or /debug flags for a trace to be sent to developer.", e.ExceptionObject as Exception);
         }
 
-        private static void ConfigureLogging(int verbosity)
-        {
-            log4net.Config.BasicConfigurator.Configure();
-
-            var hierarchy = log4net.LogManager.GetRepository() as log4net.Repository.Hierarchy.Hierarchy;
-
-            if (verbosity <= VERBOSITY_NORMAL)
-            {
-                hierarchy.Root.Level = log4net.Core.Level.Off;
-            }
-            else
-            {
-                switch (verbosity)
-                {
-                    case VERBOSITY_VERBOSE:
-                        hierarchy.Root.Level = log4net.Core.Level.Info;
-                        break;
-                    case VERBOSITY_DEBUG:
-                        hierarchy.Root.Level = log4net.Core.Level.Debug;
-                        break;
-                }
-            }
-        }
-
         private static IEnumerable<string> GetInputFiles(CommandLineArgs args)
         {
             return PathHelper.GetMatchingPaths(args.InputFiles, !args.ContinueOnFailure);
@@ -203,12 +155,12 @@ namespace NewRelicConfigBuilder
 
                 bool result = generator.Execute();
 
-                return result ? 0 : -1;
+                return result ? RETURN_SUCCESS : RETURN_FAILURE;
             }
             catch (Exception ex)
             {
                 ErrorOut("Failed to process instrumentation: {0}", ex, args.Verbose || args.VeryVerbose);
-                return -1;
+                return RETURN_FAILURE;
             }
         }
 
@@ -230,6 +182,7 @@ namespace NewRelicConfigBuilder
 
         private static void ErrorOut(string message, Exception ex, bool verbose)
         {
+            LogManager.GetLogger(typeof(Program)).Error(message, ex);
             Console.WriteLine(message, verbose ? ex.ToString() : ex.Message);
         }
     }
