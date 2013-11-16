@@ -11,13 +11,13 @@ namespace NRConfigTool
     public class NewRelicCustomInstrumentationFileMergeTask : AppDomainIsolatedTask
     {
         [Required]
-        public string InputFilter
+        public string[] InputFiles
         {
             get;
             set;
         }
 
-        [Output]
+        [Required]
         public string OutputFile
         {
             get;
@@ -26,9 +26,12 @@ namespace NRConfigTool
 
         public override bool Execute()
         {
-            this.Log.LogMessage(MessageImportance.High, string.Format("Filter presented: {0}", this.InputFilter));
+            var inputFiles = PathHelper.GetMatchingPaths(this.InputFiles);
 
-            return true;
+            var merger = new CustomInstrumentationMerger(inputFiles, this.OutputFile);
+            merger.ContinueOnFailure = true;
+
+            return merger.Execute();
         }
     }
 }

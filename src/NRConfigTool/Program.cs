@@ -151,33 +151,7 @@ namespace NewRelicConfigBuilder
 
         private static IEnumerable<string> GetInputFiles(CommandLineArgs args)
         {
-            List<string> inputPaths = new List<string>();
-            foreach (string fileSpec in args.InputFiles)
-            {
-                try
-                {
-                    var spec = System.Environment.ExpandEnvironmentVariables(fileSpec);
-
-                    var directory = Path.GetDirectoryName(spec);
-                    if (string.IsNullOrWhiteSpace(directory))
-                    {
-                        directory = Environment.CurrentDirectory;
-                    }
-
-                    var filename = Path.GetFileName(spec);
-                    inputPaths.AddRange(Directory.GetFiles(directory, filename));
-                }
-                catch (Exception ex)
-                {
-                    ErrorOut(string.Format("Failed processing input file {0} : {{0}}", fileSpec), ex, args.Verbose || args.VeryVerbose);
-                    if (!args.ContinueOnFailure)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return inputPaths;
+            return PathHelper.GetMatchingPaths(args.InputFiles, !args.ContinueOnFailure);
         }
 
         public static int ProcessMerge(CommandLineArgs args)
@@ -185,50 +159,25 @@ namespace NewRelicConfigBuilder
             try
             {
                 IEnumerable<string> inputPaths = GetInputFiles(args);
+                string outputPath = "CustomInstrumentation.xml";
 
-                List<Extension> extensions = new List<Extension>();
-                foreach (string path in inputPaths)
+                if (!string.IsNullOrWhiteSpace(args.OutputFile))
                 {
-                    try
-                    {
-                        using (FileStream r = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
-                        {
-                            extensions.Add(Renderer.LoadRenderedFromStream(r));
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        ErrorOut(string.Format("Failed to load file {0}: {{0}}", path), ex, args.Verbose || args.VeryVerbose);
-                        if (!args.ContinueOnFailure)
-                        {
-                            throw;
-                        }
-                    }
-
-                    Extension merged = Extension.Merge(extensions.ToArray());
-
-                    string tempPath = Path.GetTempFileName();
-                    using (FileStream w = new FileStream(tempPath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None))
-                    {
-                        Renderer.RenderToStream(merged, w);
-                    }
-
-                    // Delete existing file, if required
-                    if (File.Exists(args.OutputFile))
-                    {
-                        File.Delete(args.OutputFile);
-                    }
-
-                    File.Move(tempPath, args.OutputFile);
+                    outputPath = args.OutputFile;
                 }
+
+                var merger = new CustomInstrumentationMerger(inputPaths, outputPath);
+                merger.ContinueOnFailure = args.ContinueOnFailure;
+
+                bool result = merger.Execute();
+
+                return result ? 0 : -1;
             }
             catch (Exception ex)
             {
                 ErrorOut("Failed to process instrumentation: {0}", ex, args.Verbose || args.VeryVerbose);
                 return -1;
             }
-
-            return 0;
         }
 
         public static int ProcessCreate(CommandLineArgs args)

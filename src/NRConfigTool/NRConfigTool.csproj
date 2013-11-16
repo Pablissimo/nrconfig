@@ -61,9 +61,11 @@
   <ItemGroup>
     <Compile Include="CommandLineArgs.cs" />
     <Compile Include="CustomInstrumentationGenerator.cs" />
+    <Compile Include="CustomInstrumentationMerger.cs" />
     <Compile Include="NewRelicCustomInstrumentationFileMergeTask.cs" />
     <Compile Include="NewRelicCustomInstrumentationFileTask.cs" />
     <Compile Include="OperationMode.cs" />
+    <Compile Include="PathHelper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
