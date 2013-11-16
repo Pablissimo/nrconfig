@@ -9,6 +9,10 @@ using System.Threading.Tasks;
 
 namespace NRConfigTool.Logging
 {
+    /// <summary>
+    /// A log4net appender that directs logged messages to a TaskLoggingHelper instance
+    /// as would be available to custom MSBuild tasks.
+    /// </summary>
     internal class BuildTaskLogAppender : log4net.Appender.AppenderSkeleton
     {
         TaskLoggingHelper _taskLoggingHelper;

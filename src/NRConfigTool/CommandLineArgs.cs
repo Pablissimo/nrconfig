@@ -82,6 +82,10 @@ namespace NewRelicConfigBuilder
             }
         }
 
+        /// <summary>
+        /// Gets the parsed set of InstrumentationScopes to be used in the absence of class- or
+        /// method-level attributes.
+        /// </summary>
         public InstrumentationScopes ForceIfNotMarkedUpValidScopes
         {
             get

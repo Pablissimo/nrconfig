@@ -4,13 +4,23 @@
   <UsingTask AssemblyFile="..\tools\nrconfig.exe" TaskName="NewRelicCustomInstrumentationFileMergeTask" />
 
   <Target Name="GenerateNewRelicCustomInstrumentationFile" AfterTargets="Build">
-    <Message Text="Generating New Relic custom instrumentation files" />
-
+    <!--
+    First, build a custom instrumentation file for this project.
+    -->
     <NewRelicCustomInstrumentationFileTask InputFiles="$(TargetPath)" OutputFile="$(TargetDir)$(TargetName).CustomInstrumentation.xml" />
+    
+    <!--
+    Then turn all found custom instrumentation files (named as the above task would generated them) into a single, merged CustomInstrumentation.xml file
+    for subsequent deployment.
+    -->
     <NewRelicCustomInstrumentationFileMergeTask InputFilter="$(TargetDir)*.CustomInstrumentation.xml" OutputFile="$(TargetDir)CustomInstrumentation.xml" />
   </Target>
   
   <PropertyGroup>
+    <!--
+    Include .CustomInstrumentation.xml files such that when a project A which has been processed by NRConfig and is then referenced by another
+    project B, B's build will pull through A's custom instrumentation definitions for merging.
+    -->
     <AllowedReferenceRelatedFileExtensions>
       $(AllowedReferenceRelatedFileExtensions);
       .CustomInstrumentation.xml

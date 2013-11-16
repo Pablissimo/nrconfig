@@ -9,13 +9,24 @@ using log4net;
 
 namespace NRConfigTool
 {
+    /// <summary>
+    /// An MSBuild task that scans assemblies for classes or methods marked up with [Instrument] attributes
+    /// and generates a New Relic custom instrumentation file based upon them.
+    /// </summary>
     public class NewRelicCustomInstrumentationFileTask : AppDomainIsolatedTask
     {
         ILog _logger = LogManager.GetLogger(typeof(NewRelicCustomInstrumentationFileMergeTask));
 
+        /// <summary>
+        /// Gets or sets the collection if input files to be processed into a custom instrumentation file.
+        /// </summary>
         [Required]
         public ITaskItem[] InputFiles { get; set; }
 
+        /// <summary>
+        /// Gets or sets the path to the output file to be generated. If absent, a file called CustomInstrumentation.xml
+        /// is generated in the current directory.
+        /// </summary>
         [Output]
         public ITaskItem OutputFile { get; set; }
 

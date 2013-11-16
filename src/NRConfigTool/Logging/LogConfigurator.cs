@@ -10,6 +10,14 @@ namespace NRConfigTool.Logging
 {
     internal static class LogConfigurator
     {
+        /// <summary>
+        /// Configures logging to a specified level, optionally directing log output to a particular
+        /// IAppender instance.
+        /// </summary>
+        /// <param name="verbose">If true, informational messages should be logged.</param>
+        /// <param name="debug">If true, diagnostic and trace-level messages should be logged.</param>
+        /// <param name="appender">An IAppender to which log traffic should be directed. If absent, a default
+        /// is used.</param>
         public static void Configure(bool verbose, bool debug, IAppender appender = null)
         {
             if (appender != null)
