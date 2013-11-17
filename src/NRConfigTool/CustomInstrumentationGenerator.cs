@@ -85,17 +85,36 @@ namespace NRConfigTool
                 }
                 catch (Exception ex)
                 {
-                    _logger.Error(string.Format("Failed to load assembly from {0}: {{0}}", assyPath), ex);
+                    _logger.Error(string.Format("Failed to load assembly from {0}", assyPath), ex);
                     if (!this.ContinueOnFailure)
                     {
                         return false;
                     }
                 }
-                
-                var toAdd = InstrumentationDiscoverer.GetInstrumentationSet(assy, assemblyAttribute, this.TypeFilter);
-                _logger.Info(string.Format("Processed {0} targets from {1}", toAdd.Count(), assy.FullName));
 
-                targets.AddRange(toAdd);
+                try
+                {
+                    var toAdd = InstrumentationDiscoverer.GetInstrumentationSet(assy, assemblyAttribute, this.TypeFilter);
+                    _logger.Info(string.Format("Processed {0} targets from {1}", toAdd.Count(), assy.FullName));
+
+                    targets.AddRange(toAdd);
+                }
+                catch (ReflectionTypeLoadException ex)
+                {
+                    _logger.Error(string.Format("Failed to get instrumentation set for {0}: {1}", assy.FullName, ex.Message), ex);
+                    if (ex.LoaderExceptions != null && ex.LoaderExceptions.Any())
+                    {
+                        foreach (var loaderException in ex.LoaderExceptions)
+                        {
+                            _logger.Error("Loader exception (related to previous instrumentation set failure): " + loaderException.Message, loaderException);
+                        }
+                    }
+
+                    if (!this.ContinueOnFailure)
+                    {
+                        return false;
+                    }
+                }
             }
 
             _logger.Info(string.Format("Processed {0} targets", targets.Count));

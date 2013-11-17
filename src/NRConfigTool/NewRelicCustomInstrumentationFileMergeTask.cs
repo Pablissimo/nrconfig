@@ -33,7 +33,8 @@ namespace NRConfigTool
         /// Gets or sets the path of the output file to be generated.
         /// </summary>
         [Required]
-        public string OutputFile
+        [Output]
+        public ITaskItem OutputFile
         {
             get;
             set;
@@ -45,7 +46,7 @@ namespace NRConfigTool
 
             var inputFiles = PathHelper.GetMatchingPaths(this.InputFiles);
 
-            var merger = new CustomInstrumentationMerger(inputFiles, this.OutputFile);
+            var merger = new CustomInstrumentationMerger(inputFiles, this.OutputFile.ItemSpec);
             merger.ContinueOnFailure = true;
 
             return merger.Execute();

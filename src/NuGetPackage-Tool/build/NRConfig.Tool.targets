@@ -3,27 +3,40 @@
   <UsingTask AssemblyFile="..\tools\nrconfig.exe" TaskName="NewRelicCustomInstrumentationFileTask" />
   <UsingTask AssemblyFile="..\tools\nrconfig.exe" TaskName="NewRelicCustomInstrumentationFileMergeTask" />
 
-  <Target Name="GenerateNewRelicCustomInstrumentationFile" AfterTargets="Build">
+  <Target Name="DammitNeedInSomewhere" BeforeTargets="CopyFilesToOutputDirectory">
+    <Message Text="Before copy to output directory" Importance="high" />
+  </Target>
+
+  <Target Name="GenerateNewRelicCustomInstrumentationFile" BeforeTargets="GetCopyToOutputDirectoryItems">
+    <Message Text="Generating New Relic files" Importance="high" />
     <!--
     First, build a custom instrumentation file for this project.
     -->
-    <NewRelicCustomInstrumentationFileTask InputFiles="$(TargetPath)" OutputFile="$(TargetDir)$(TargetName).CustomInstrumentation.xml" />
-    
+    <NewRelicCustomInstrumentationFileTask InputFiles="$(IntermediateOutputPath)$(TargetFileName)" OutputFile="$(IntermediateOutputPath)$(TargetName).CustomInstrumentation.xml" />
+
     <!--
     Then turn all found custom instrumentation files (named as the above task would generated them) into a single, merged CustomInstrumentation.xml file
     for subsequent deployment.
     -->
-    <NewRelicCustomInstrumentationFileMergeTask InputFilter="$(TargetDir)*.CustomInstrumentation.xml" OutputFile="$(TargetDir)CustomInstrumentation.xml" />
+    <NewRelicCustomInstrumentationFileMergeTask InputFiles="$(IntermediateOutputPath)*.CustomInstrumentation.xml" OutputFile="$(IntermediateOutputPath)CustomInstrumentation.xml" />
   </Target>
-  
-  <PropertyGroup>
-    <!--
-    Include .CustomInstrumentation.xml files such that when a project A which has been processed by NRConfig and is then referenced by another
-    project B, B's build will pull through A's custom instrumentation definitions for merging.
-    -->
-    <AllowedReferenceRelatedFileExtensions>
-      $(AllowedReferenceRelatedFileExtensions);
-      .CustomInstrumentation.xml
-    </AllowedReferenceRelatedFileExtensions>
-  </PropertyGroup>
+
+  <ItemGroup>
+    <NewRelicCustomInstrumentationFile Include="$(IntermediateOutputPath)$(TargetName).CustomInstrumentation.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </NewRelicCustomInstrumentationFile>
+  </ItemGroup>
+
+  <Target Name="PayItForward" BeforeTargets="GetCopyToOutputDirectoryItems">
+    <Message Text="Paying it forward" Importance="high" />
+
+    <AssignTargetPath Files="@(NewRelicCustomInstrumentationFile)" RootFolder="$(MSBuildProjectDirectory)\$(OutputPath)">
+      <Output TaskParameter="AssignedFiles" ItemName="NewRelicCustomInstrumentationFileTargetPath" />
+    </AssignTargetPath>
+
+    <ItemGroup>
+      <AllItemsFullPathWithTargetPath Include="@(NewRelicCustomInstrumentationFileTargetPath->'%(FullPath)')" />
+      <_SourceItemsToCopyToOutputDirectoryAlways Include="@(NewRelicCustomInstrumentationFileTargetPath->'%(FullPath)')" />
+    </ItemGroup>
+  </Target>
 </Project>
