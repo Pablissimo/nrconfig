@@ -93,6 +93,8 @@ namespace NewRelicConfigBuilder
                 Console.WriteLine("Output written to {0} in {1:f2}s - memory allocated {2:n0}KB", parsedArgs.OutputFile, (DateTime.Now - start).TotalSeconds, (bytesAfter - bytesBefore) / 1024f);
             }
 
+            Console.ReadLine();
+
             return Environment.ExitCode;
         }
 

@@ -41,6 +41,63 @@
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Cci.Analysis.ControlAndDataFlowGraph">
+      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.Analysis.ControlAndDataFlowGraph.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.AstsProjectedAsCodeModel">
+      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.AstsProjectedAsCodeModel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.CodeModel">
+      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.CodeModel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.CodeModelToIL">
+      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.CodeModelToIL.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.ContractExtractor">
+      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.ContractExtractor.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.CSharpSourceEmitter">
+      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.CSharpSourceEmitter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.ILGenerator">
+      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.ILGenerator.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.MetadataHelper">
+      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.MetadataHelper.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.MetadataModel">
+      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.MetadataModel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.MutableCodeModel">
+      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.MutableCodeModel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.MutableMetadataModel">
+      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.MutableMetadataModel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.NewILToCodeModel">
+      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.NewILToCodeModel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.PdbReader">
+      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.PdbReader.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.PdbWriter">
+      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.PdbWriter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.PeReader">
+      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.PeReader.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.PeWriter">
+      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.PeWriter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.ReflectionEmitter">
+      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.ReflectionEmitter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.SourceEmitter">
+      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.SourceEmitter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.SourceModel">
+      <HintPath>..\packages\CCI.1.0.13\lib\net40\Microsoft.Cci.SourceModel.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -51,7 +108,32 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\InstrumentationTarget.cs" />
+    <Compile Include="Infrastructure\Cci\CciAssemblyDetails.cs" />
+    <Compile Include="Infrastructure\Cci\CciInstrumentationDiscoverer.cs" />
+    <Compile Include="Infrastructure\Cci\CciConstructorDetails.cs" />
+    <Compile Include="Infrastructure\Cci\CciMethodDetails.cs" />
+    <Compile Include="Infrastructure\Cci\CciParameterDetails.cs" />
+    <Compile Include="Infrastructure\Cci\CciPropertyDetails.cs" />
+    <Compile Include="Infrastructure\Cci\CciReferenceDetails.cs" />
+    <Compile Include="Infrastructure\Cci\CciTypeDetails.cs" />
+    <Compile Include="Infrastructure\IAssemblyDetails.cs" />
+    <Compile Include="Infrastructure\IConstructorDetails.cs" />
+    <Compile Include="Infrastructure\IInstrumentable.cs" />
+    <Compile Include="Infrastructure\IMethodDetails.cs" />
     <Compile Include="Infrastructure\InstrumentationDiscoverer.cs" />
+    <Compile Include="Infrastructure\InstrumentationDiscovererBase.cs" />
+    <Compile Include="Infrastructure\InstrumentationTarget2.cs" />
+    <Compile Include="Infrastructure\IParameterDetails.cs" />
+    <Compile Include="Infrastructure\IPropertyDetails.cs" />
+    <Compile Include="Infrastructure\ITypeDetails.cs" />
+    <Compile Include="Infrastructure\Reflected\ReflectedAssemblyDetails.cs" />
+    <Compile Include="Infrastructure\Reflected\ReflectedConstructorDetails.cs" />
+    <Compile Include="Infrastructure\Reflected\ReflectedInstrumentationDiscoverer.cs" />
+    <Compile Include="Infrastructure\Reflected\ReflectedMemberInfoDetails.cs" />
+    <Compile Include="Infrastructure\Reflected\ReflectedMethodDetails.cs" />
+    <Compile Include="Infrastructure\Reflected\ReflectedParameterDetails.cs" />
+    <Compile Include="Infrastructure\Reflected\ReflectedPropertyDetails.cs" />
+    <Compile Include="Infrastructure\Reflected\ReflectedTypeDetails.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rendering\ExactMethodMatcher.cs" />
     <Compile Include="Rendering\Extension.cs" />
@@ -70,6 +152,7 @@
     <None Include="NRConfig.snk" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

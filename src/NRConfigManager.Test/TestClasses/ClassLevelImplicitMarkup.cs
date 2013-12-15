@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 
 namespace NRConfigManager.Test.TestClasses
 {
-    [Instrument]
+    [Instrument(IncludeCompilerGeneratedCode = false, Metric = Metric.Both, MetricName = "TestMetricName", Scopes = InstrumentationScopes.Methods | InstrumentationScopes.Constructors | InstrumentationScopes.Properties)]
     public class ClassLevelImplicitMarkup
     {
         public bool InstrumentedAutoProperty

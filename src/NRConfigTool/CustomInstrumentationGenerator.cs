@@ -10,6 +10,7 @@ using NRConfigManager.Configuration;
 using NRConfigManager.Infrastructure;
 using NRConfigManager.Rendering;
 using log4net;
+using NRConfigManager.Infrastructure.Cci;
 
 namespace NRConfigTool
 {
@@ -74,14 +75,17 @@ namespace NRConfigTool
                 assemblyAttribute.IncludeCompilerGeneratedCode = this.IncludeCompilerGeneratedCode;
             }
 
-            List<InstrumentationTarget> targets = new List<InstrumentationTarget>();
+            var targets = new List<InstrumentationTarget2>();
 
             foreach (string assyPath in this.InputPaths)
             {
+                targets.AddRange(new CciInstrumentationDiscoverer().GetInstrumentationSet(assyPath, assemblyAttribute, x => true));
+
+                /*
                 Assembly assy = null;
                 try
                 {
-                    assy = Assembly.LoadFrom(assyPath);
+                    assy = Assembly.ReflectionOnlyLoadFrom(assyPath);
                 }
                 catch (Exception ex)
                 {
@@ -115,6 +119,7 @@ namespace NRConfigTool
                         return false;
                     }
                 }
+                 * */
             }
 
             _logger.Info(string.Format("Processed {0} targets", targets.Count));

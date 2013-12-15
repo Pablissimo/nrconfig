@@ -1,4 +1,5 @@
 ﻿using NRConfig;
+using NRConfigManager.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,6 +56,14 @@ namespace NRConfigManager.Configuration
             this.Metric = metric;
 
             this.IsConstructor = true;
+        }
+
+        public InstrumentationTarget(IMethodDetails method, string metricName, Metric metric)
+        {
+        }
+
+        public InstrumentationTarget(IConstructorDetails ctor, string metricName, Metric metric)
+        {
         }
     }
 }

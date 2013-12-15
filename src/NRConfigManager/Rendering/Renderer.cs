@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+using NRConfigManager.Infrastructure;
 
 namespace NRConfigManager.Rendering
 {
@@ -24,7 +25,7 @@ namespace NRConfigManager.Rendering
         /// <param name="targets">The set of targets to be instrumented.</param>
         /// <returns>An Extension object representing the in-memory New Relic custom
         /// instrumentation configuration XML document.</returns>
-        public static Extension Render(IEnumerable<InstrumentationTarget> targets)
+        public static Extension Render(IEnumerable<InstrumentationTarget2> targets)
         {
             Instrumentation toReturn = new Instrumentation();
 
@@ -44,8 +45,7 @@ namespace NRConfigManager.Rendering
 
                     TracerFactory tracerFactory = new TracerFactory(metricName, groupedByMetric.Key);
 
-                    Func<InstrumentationTarget, Type> typeGetter = x => x.Target.DeclaringType;
-                    var byType = groupedByMetric.GroupBy(x => typeGetter(x));
+                    var byType = groupedByMetric.GroupBy(x => x.Target.DeclaringType);
                     foreach (var groupedByType in byType.OrderBy(x => x.Key.Assembly.FullName).ThenBy(x => x.Key.FullName))
                     {
                         Match match = GetMatchFromType(groupedByType.Key);
@@ -84,7 +84,7 @@ namespace NRConfigManager.Rendering
         /// </summary>
         /// <param name="targets">The set of targets to be instrumented.</param>
         /// <param name="stream">The stream to which the XML document should be rendered.</param>
-        public static void RenderToStream(IEnumerable<InstrumentationTarget> targets, Stream stream)
+        public static void RenderToStream(IEnumerable<InstrumentationTarget2> targets, Stream stream)
         {
             Extension rootElement = Render(targets);
 
@@ -116,30 +116,30 @@ namespace NRConfigManager.Rendering
             return serializer.Deserialize(stream) as Extension;
         }
 
-        internal static ExactMethodMatcher GetMatcherFromTarget(InstrumentationTarget target)
+        internal static ExactMethodMatcher GetMatcherFromTarget(InstrumentationTarget2 target)
         {
             string methodName = target.Target.Name;
-            ParameterInfo[] parameters = target.Target.GetParameters();
+            var parameters = target.Target.Parameters;
 
             string[] parameterTypeNames = null;
 
             if (target.Target.ContainsGenericParameters)
             {
                 var method = target.Target;
-                var genericArgs = method.GetGenericArguments();
+                var genericArgs = method.GenericArguments;
 
                 // Match up the generic arguments to the parameter types as required
                 List<string> tempParamTypeNames = new List<string>();
                 foreach (var parameter in parameters)
                 {
-                    if (parameter.ParameterType.IsGenericParameter)
+                    if (parameter.Type.IsGenericParameter)
                     {
                         int matchingIdx = -1;
                         for (int i = 0; i < genericArgs.Length; i++)
                         {
                             var t = genericArgs[i];
 
-                            if (t.Name == parameter.ParameterType.Name)
+                            if (t.Name == parameter.Type.Name)
                             {
                                 matchingIdx = i;
                             }
@@ -156,7 +156,7 @@ namespace NRConfigManager.Rendering
                     }
                     else
                     {
-                        tempParamTypeNames.Add(GetFriendlyTypeName(parameter.ParameterType));
+                        tempParamTypeNames.Add(GetFriendlyTypeName(parameter.Type));
                     }
                 }
 
@@ -164,7 +164,7 @@ namespace NRConfigManager.Rendering
             }
             else
             {
-                parameterTypeNames = (parameters ?? Enumerable.Empty<ParameterInfo>()).Select(x => GetFriendlyTypeName(x.ParameterType)).ToArray();
+                parameterTypeNames = (parameters ?? Enumerable.Empty<IParameterDetails>()).Select(x => GetFriendlyTypeName(x.Type)).ToArray();
             }            
 
             // This is a kludge to compensate for a problem specifying parameters in the instrumentation file
@@ -173,7 +173,7 @@ namespace NRConfigManager.Rendering
             // such a method, we'll just output a parameterless matcher definition. This has the negative side-effect
             // that we'll inadvertently instrument all overloads of the method (if any exist), even if they don't
             // match our instrumentation criteria
-            if (parameters != null && parameters.Any(x => x.ParameterType.IsGenericType && x.ParameterType.GetGenericArguments().Count() > 1))
+            if (parameters != null && parameters.Any(x => x.Type.IsGenericType && x.Type.GenericArguments.Count() > 1))
             {
                 parameterTypeNames = new string[0];
             }
@@ -185,7 +185,7 @@ namespace NRConfigManager.Rendering
             return new ExactMethodMatcher(methodName, parameterTypeNames.ToArray());
         }
 
-        private static string GetFriendlyTypeName(Type t)
+        private static string GetFriendlyTypeName(ITypeDetails t)
         {
             if (!t.IsGenericType)
             {
@@ -197,16 +197,16 @@ namespace NRConfigManager.Rendering
                 // System.Nullable`1[[System.Decimal, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]
                 // Which isn't much use to us as NewRelic uses a combination of backtick notation and angle brackets. 
                 // However, we can fiddle this...
-                const string FORMAT = "{0}.{1}<{2}>";
-                string[] innerTypes = t.GenericTypeArguments.Select(x => string.Format("{0}", GetFriendlyTypeName(x))).ToArray();
+                const string FORMAT = "{0}<{1}>";
+                string[] innerTypes = t.GenericArguments.Select(x => string.Format("{0}", GetFriendlyTypeName(x))).ToArray();
 
-                return string.Format(FORMAT, t.Namespace, t.Name, string.Join(",", innerTypes));
+                return string.Format(FORMAT, t.FullName, string.Join(",", innerTypes));
             }
         }
 
-        private static Match GetMatchFromType(Type t)
+        private static Match GetMatchFromType(ITypeDetails t)
         {
-            var assy = t.Assembly.GetName().Name;
+            var assy = t.Assembly.Name;
             var className = t.ToString();
 
             return new Match(assy, className);
