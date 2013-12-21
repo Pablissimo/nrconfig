@@ -68,6 +68,11 @@ namespace NewRelicConfigBuilder
             + "anonymous types that are generated when dealing with lambda expressions.")]
         public bool? IncludeCompilerGeneratedCode { get; set; }
 
+        [CmdLineArg(Alias = "l", Required = false)]
+        [Description("Specifies that legacy, reflection-based discovery should be performed. This requires any dependencies of any types "
+            + "in any processed assembly to be present in the GAC or next to the processed assembly")]
+        public bool LegacyMode { get; set; }
+
         public bool ForceIfNotMarkedUpValid
         {
             get

@@ -207,7 +207,7 @@ namespace NRConfigManager.Rendering
         private static Match GetMatchFromType(ITypeDetails t)
         {
             var assy = t.Assembly.Name;
-            var className = t.ToString();
+            var className = t.FullName;
 
             return new Match(assy, className);
         }

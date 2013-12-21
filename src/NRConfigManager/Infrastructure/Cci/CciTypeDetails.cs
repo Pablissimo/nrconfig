@@ -10,9 +10,9 @@ namespace NRConfigManager.Infrastructure.Cci
 {
     public class CciTypeDetails : CciReferenceDetails, ITypeDetails
     {
-        INamedTypeDefinition _cciType;
+        ITypeDefinition _cciType;
 
-        public CciTypeDetails(INamedTypeDefinition cciType)
+        public CciTypeDetails(ITypeDefinition cciType)
             : base(cciType)
         {
             if (cciType == null)
@@ -35,7 +35,17 @@ namespace NRConfigManager.Infrastructure.Cci
 
         public string FullName
         {
-            get { return _cciType.Name.Value; }
+            get 
+            {
+                if (_cciType is INestedTypeDefinition)
+                {
+                    return TypeHelper.GetTypeName(((INestedTypeDefinition)_cciType).ContainingTypeDefinition, NameFormattingOptions.OmitTypeArguments | NameFormattingOptions.PreserveSpecialNames) + "+" + TypeHelper.GetTypeName(_cciType, NameFormattingOptions.OmitContainingNamespace | NameFormattingOptions.OmitContainingType);
+                }
+                else
+                {
+                    return TypeHelper.GetTypeName(_cciType, NameFormattingOptions.OmitTypeArguments | NameFormattingOptions.PreserveSpecialNames);
+                }
+            }
         }
 
         public bool IsGenericParameter
@@ -127,6 +137,29 @@ namespace NRConfigManager.Infrastructure.Cci
             bool mayBeStatic = (bindingFlags & BindingFlags.Static) == BindingFlags.Static;
 
             return (mayBePublic && isPublic) || (mayBeNonPublic && !isPublic) || (mayBeInstance && !isStatic) || (mayBeStatic && isStatic);
+        }
+
+        public override string ToString()
+        {
+            return this.FullName;
+        }
+
+        public override bool Equals(object obj)
+        {
+            CciTypeDetails other = obj as CciTypeDetails;
+            if (other != null)
+            {
+                return other._cciType.InternedKey == _cciType.InternedKey;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return _cciType.InternedKey.GetHashCode();
         }
     }
 }

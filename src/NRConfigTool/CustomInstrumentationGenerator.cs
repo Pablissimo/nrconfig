@@ -11,6 +11,7 @@ using NRConfigManager.Infrastructure;
 using NRConfigManager.Rendering;
 using log4net;
 using NRConfigManager.Infrastructure.Cci;
+using NRConfigManager.Infrastructure.Reflected;
 
 namespace NRConfigTool
 {
@@ -52,6 +53,12 @@ namespace NRConfigTool
         public bool ContinueOnFailure { get; set; }
 
         /// <summary>
+        /// Gets or sets whether type and method discovery is performed by a legacy reflection method, which
+        /// requires all dependencies to be available in the GAC or next to the assembly.
+        /// </summary>
+        public bool UseReflectionBasedDiscovery { get; set; }
+
+        /// <summary>
         /// Gets or sets a delegate that filters whether a type found in an assembly should be considered for
         /// instrumentation.
         /// </summary>
@@ -79,7 +86,19 @@ namespace NRConfigTool
 
             foreach (string assyPath in this.InputPaths)
             {
-                targets.AddRange(new CciInstrumentationDiscoverer().GetInstrumentationSet(assyPath, assemblyAttribute, x => true));
+                InstrumentationDiscovererBase discoverer = null;
+                
+                if (this.UseReflectionBasedDiscovery)
+                {
+                    _logger.Info("Using legacy reflection-based discovery on request");
+                    discoverer = new ReflectedInstrumentationDiscoverer();
+                }
+                else
+                {
+                    discoverer = new CciInstrumentationDiscoverer();
+                }
+
+                targets.AddRange(discoverer.GetInstrumentationSet(assyPath, assemblyAttribute, x => true));
 
                 /*
                 Assembly assy = null;

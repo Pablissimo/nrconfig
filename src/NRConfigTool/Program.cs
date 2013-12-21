@@ -152,6 +152,7 @@ namespace NewRelicConfigBuilder
                     generator.AutomaticInstrumentationScopes = args.ForceIfNotMarkedUpValidScopes;
                 }
 
+                generator.UseReflectionBasedDiscovery = args.LegacyMode;
                 generator.ContinueOnFailure = args.ContinueOnFailure;
                 generator.IncludeCompilerGeneratedCode = args.IncludeCompilerGeneratedCode ?? false;
 

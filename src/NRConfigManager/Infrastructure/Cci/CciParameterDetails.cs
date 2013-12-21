@@ -18,7 +18,7 @@ namespace NRConfigManager.Infrastructure.Cci
 
         public ITypeDetails Type
         {
-            get { return new CciTypeDetails(_parameter.Type as INamedTypeDefinition); }
+            get { return new CciTypeDetails(_parameter.Type.ResolvedType); }
         }
 
         public CciParameterDetails(IParameterDefinition parameter)

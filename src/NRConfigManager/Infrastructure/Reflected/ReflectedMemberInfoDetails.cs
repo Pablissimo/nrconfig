@@ -18,7 +18,7 @@ namespace NRConfigManager.Infrastructure.Reflected
             get
             {
                 // Since we might have assy version differences, we're stuck buggering about with reflection
-                Attribute matchingAttribute = _memberInfo.GetCustomAttributes().FirstOrDefault(x => x.GetType().Name.EndsWith("InstrumentAttribute"));
+                Attribute matchingAttribute = _memberInfo.GetCustomAttributes(false).OfType<Attribute>().FirstOrDefault(x => x.GetType().Name.EndsWith("InstrumentAttribute"));
 
                 InstrumentAttribute toReturn = null;
 
@@ -60,6 +60,29 @@ namespace NRConfigManager.Infrastructure.Reflected
         public ReflectedMemberInfoDetails(MemberInfo memberInfo)
         {
             _memberInfo = memberInfo;
+        }
+        
+        public override bool Equals(object obj)
+        {
+            var other = obj as ReflectedMemberInfoDetails;
+            if (other != null)
+            {
+                return _memberInfo.Equals(other._memberInfo);
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return _memberInfo.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return _memberInfo.ToString();
         }
     }
 }
