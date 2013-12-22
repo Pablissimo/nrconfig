@@ -1,6 +1,5 @@
 ﻿using log4net;
 using NRConfig;
-using NRConfigManager.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,13 +11,13 @@ namespace NRConfigManager.Infrastructure
 {
     public abstract class InstrumentationDiscovererBase
     {
-        protected ILog _logger = LogManager.GetLogger(typeof(InstrumentationDiscoverer));
+        protected ILog _logger = LogManager.GetLogger(typeof(InstrumentationDiscovererBase));
 
         protected abstract IEnumerable<ITypeDetails> GetTypes(string assemblyPath);
         
-        public virtual IEnumerable<InstrumentationTarget2> GetInstrumentationSet(string assemblyPath, InstrumentAttribute context, Predicate<ITypeDetails> typeFilter)
+        public virtual IEnumerable<InstrumentationTarget> GetInstrumentationSet(string assemblyPath, InstrumentAttribute context, Predicate<ITypeDetails> typeFilter)
         {
-            var toReturn = new List<InstrumentationTarget2>();
+            var toReturn = new List<InstrumentationTarget>();
 
             _logger.InfoFormat("Processing assembly {0}", assemblyPath);
 
@@ -38,9 +37,9 @@ namespace NRConfigManager.Infrastructure
             return toReturn;
         }
 
-        protected virtual IEnumerable<InstrumentationTarget2> GetInstrumentationSet(ITypeDetails t, InstrumentAttribute context)
+        protected virtual IEnumerable<InstrumentationTarget> GetInstrumentationSet(ITypeDetails t, InstrumentAttribute context)
         {
-            var toReturn = new List<InstrumentationTarget2>();
+            var toReturn = new List<InstrumentationTarget>();
 
             if (!t.IsGenericTypeDefinition)
             {
@@ -227,9 +226,9 @@ namespace NRConfigManager.Infrastructure
             return toReturn;
         }
 
-        protected virtual InstrumentationTarget2 GetInstrumentationTarget(IMethodDetails method, InstrumentAttribute context)
+        protected virtual InstrumentationTarget GetInstrumentationTarget(IMethodDetails method, InstrumentAttribute context)
         {
-            return new InstrumentationTarget2(method, context.MetricName, context.Metric);
+            return new InstrumentationTarget(method, context.MetricName, context.Metric);
         }
     }
 }

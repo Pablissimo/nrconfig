@@ -1,5 +1,4 @@
-﻿using NRConfigManager.Configuration;
-using NRConfig;
+﻿using NRConfig;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,7 +24,7 @@ namespace NRConfigManager.Rendering
         /// <param name="targets">The set of targets to be instrumented.</param>
         /// <returns>An Extension object representing the in-memory New Relic custom
         /// instrumentation configuration XML document.</returns>
-        public static Extension Render(IEnumerable<InstrumentationTarget2> targets)
+        public static Extension Render(IEnumerable<InstrumentationTarget> targets)
         {
             Instrumentation toReturn = new Instrumentation();
 
@@ -84,7 +83,7 @@ namespace NRConfigManager.Rendering
         /// </summary>
         /// <param name="targets">The set of targets to be instrumented.</param>
         /// <param name="stream">The stream to which the XML document should be rendered.</param>
-        public static void RenderToStream(IEnumerable<InstrumentationTarget2> targets, Stream stream)
+        public static void RenderToStream(IEnumerable<InstrumentationTarget> targets, Stream stream)
         {
             Extension rootElement = Render(targets);
 
@@ -116,7 +115,7 @@ namespace NRConfigManager.Rendering
             return serializer.Deserialize(stream) as Extension;
         }
 
-        internal static ExactMethodMatcher GetMatcherFromTarget(InstrumentationTarget2 target)
+        internal static ExactMethodMatcher GetMatcherFromTarget(InstrumentationTarget target)
         {
             string methodName = target.Target.Name;
             var parameters = target.Target.Parameters;

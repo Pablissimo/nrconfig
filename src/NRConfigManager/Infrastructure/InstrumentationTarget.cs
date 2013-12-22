@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace NRConfigManager.Infrastructure
 {
-    public class InstrumentationTarget2
+    public class InstrumentationTarget
     {
         public IMethodDetails Target { get; private set; }
         public string MetricName { get; private set; }
         public Metric Metric { get; private set; }
 
-        public InstrumentationTarget2(IMethodDetails target, string metricName, Metric metric)
+        public InstrumentationTarget(IMethodDetails target, string metricName, Metric metric)
         {
             this.Target = target;
             this.MetricName = metricName;

@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using NRConfig;
-using NRConfigManager.Configuration;
 using NRConfigManager.Infrastructure;
 using NRConfigManager.Rendering;
 using log4net;
@@ -82,7 +81,7 @@ namespace NRConfigTool
                 assemblyAttribute.IncludeCompilerGeneratedCode = this.IncludeCompilerGeneratedCode;
             }
 
-            var targets = new List<InstrumentationTarget2>();
+            var targets = new List<InstrumentationTarget>();
 
             foreach (string assyPath in this.InputPaths)
             {

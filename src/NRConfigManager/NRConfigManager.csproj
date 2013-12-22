@@ -107,7 +107,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Configuration\InstrumentationTarget.cs" />
     <Compile Include="Infrastructure\Cci\CciAssemblyDetails.cs" />
     <Compile Include="Infrastructure\Cci\CciInstrumentationDiscoverer.cs" />
     <Compile Include="Infrastructure\Cci\CciConstructorDetails.cs" />
@@ -120,9 +119,8 @@
     <Compile Include="Infrastructure\IConstructorDetails.cs" />
     <Compile Include="Infrastructure\IInstrumentable.cs" />
     <Compile Include="Infrastructure\IMethodDetails.cs" />
-    <Compile Include="Infrastructure\InstrumentationDiscoverer.cs" />
     <Compile Include="Infrastructure\InstrumentationDiscovererBase.cs" />
-    <Compile Include="Infrastructure\InstrumentationTarget2.cs" />
+    <Compile Include="Infrastructure\InstrumentationTarget.cs" />
     <Compile Include="Infrastructure\IParameterDetails.cs" />
     <Compile Include="Infrastructure\IPropertyDetails.cs" />
     <Compile Include="Infrastructure\ITypeDetails.cs" />

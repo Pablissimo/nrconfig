@@ -39,5 +39,9 @@ namespace NRConfigManager.Test.TestClasses
         {
 
         }
+
+        public void GenericParametersMethodNoOverload(IEnumerable<string> stringEnumerable)
+        {
+        }
     }
 }

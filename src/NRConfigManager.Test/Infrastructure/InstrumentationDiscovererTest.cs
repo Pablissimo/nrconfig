@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NRConfigManager.Configuration;
 using NRConfigManager.Infrastructure;
 using NRConfigManager.Test.TestClasses;
 using NRConfig;
