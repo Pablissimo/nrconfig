@@ -82,6 +82,11 @@ namespace NRConfigManager.Infrastructure.Cci
             get { return _cciType is IGenericTypeInstance; }
         }
 
+        public bool IsNested
+        {
+            get { return _cciType is INestedTypeDefinition; }
+        }
+
         public IEnumerable<ITypeDetails> GenericArguments
         {
             get
@@ -141,6 +146,15 @@ namespace NRConfigManager.Infrastructure.Cci
                 .Methods
                 .Where(method => method.IsConstructor && MatchesFlags(method, bindingFlags))
                 .Select(method => new Cci.CciConstructorDetails(method));
+        }
+
+        public IEnumerable<ITypeDetails> GetNestedTypes(System.Reflection.BindingFlags bindingFlags)
+        {
+            return
+                _cciType
+                .NestedTypes
+                .Where(x => MatchesFlags(x, bindingFlags))
+                .Select(x => new Cci.CciTypeDetails(x));
         }
 
         private bool MatchesFlags(ITypeDefinitionMember defn, BindingFlags bindingFlags)

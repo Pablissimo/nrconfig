@@ -19,9 +19,11 @@ namespace NRConfigManager.Infrastructure
         bool IsGenericTypeDefinition { get; }
         IEnumerable<ITypeDetails> GenericArguments { get; }
         bool IsClass { get; }
+        bool IsNested { get; }
 
         IEnumerable<IMethodDetails> GetMethods(BindingFlags bindingFlags);
         IEnumerable<IPropertyDetails> GetProperties(BindingFlags bindingFlags);
         IEnumerable<IConstructorDetails> GetConstructors(BindingFlags bindingFlags);
+        IEnumerable<ITypeDetails> GetNestedTypes(System.Reflection.BindingFlags bindingFlags);
     }
 }

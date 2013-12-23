@@ -26,7 +26,7 @@ namespace NRConfigManager.Infrastructure
                 typeFilter = x => true;
             }
 
-            var allTypes = this.GetTypes(assemblyPath).Where(x => x.IsClass && typeFilter(x));
+            var allTypes = this.GetTypes(assemblyPath).Where(x => x.IsClass && !x.IsNested && typeFilter(x));
             _logger.DebugFormat("Found {0} types", allTypes.Count());
 
             foreach (var t in allTypes)
@@ -158,6 +158,14 @@ namespace NRConfigManager.Infrastructure
                     {
                         toReturn.Add(GetInstrumentationTarget(constructorDetails, attr));
                     }
+                }
+
+                
+                // Process nested types recursively, rather than enumerating them from the get-go so that we can apply
+                // instrumentation scoping easier
+                foreach (var nested in t.GetNestedTypes(BindingFlags.Public | BindingFlags.NonPublic))
+                {
+                    toReturn.AddRange(GetInstrumentationSet(nested, typeLevelAttribute));
                 }
             }
             else

@@ -47,6 +47,11 @@ namespace NRConfigManager.Infrastructure.Reflected
             get { return _type.IsGenericType; }
         }
 
+        public bool IsNested
+        {
+            get { return _type.IsNested; }
+        }
+
         public IEnumerable<ITypeDetails> GenericArguments
         {
             get 
@@ -85,6 +90,14 @@ namespace NRConfigManager.Infrastructure.Reflected
                 _type
                 .GetConstructors(bindingFlags)
                 .Select(x => new ReflectedConstructorDetails(x));
+        }
+
+        public IEnumerable<ITypeDetails> GetNestedTypes(System.Reflection.BindingFlags bindingFlags)
+        {
+            return
+                _type
+                .GetNestedTypes(bindingFlags)
+                .Select(x => new ReflectedTypeDetails(x));
         }
 
         public ReflectedTypeDetails(Type type)
