@@ -196,10 +196,10 @@ namespace NRConfigManager.Rendering
                 // System.Nullable`1[[System.Decimal, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]
                 // Which isn't much use to us as NewRelic uses a combination of backtick notation and angle brackets. 
                 // However, we can fiddle this...
-                const string FORMAT = "{0}<{1}>";
+                const string FORMAT = "{0}.{1}<{2}>";
                 string[] innerTypes = t.GenericArguments.Select(x => string.Format("{0}", GetFriendlyTypeName(x))).ToArray();
 
-                return string.Format(FORMAT, t.FullName, string.Join(",", innerTypes));
+                return string.Format(FORMAT, t.Namespace, t.Name, string.Join(",", innerTypes));
             }
         }
 

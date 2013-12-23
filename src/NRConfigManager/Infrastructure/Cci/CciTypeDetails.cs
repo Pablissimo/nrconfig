@@ -28,6 +28,25 @@ namespace NRConfigManager.Infrastructure.Cci
             get { return new CciAssemblyDetails(TypeHelper.GetDefiningUnit(_cciType)); }
         }
 
+        public string Namespace
+        {
+            get
+            {
+                IUnitNamespaceReference ns = null;
+
+                if (!this.IsGenericType)
+                {
+                    ns = TypeHelper.GetDefiningNamespace((INamedTypeDefinition)_cciType);
+                }
+                else
+                {
+                    ns = TypeHelper.GetDefiningNamespace((INamedTypeDefinition) ((IGenericTypeInstance)_cciType).GenericType);
+                }
+
+                return TypeHelper.GetNamespaceName(ns, NameFormattingOptions.None);
+            }
+        }
+        
         public string Name
         {
             get { return this.FullName.Split('.').Last(); }
@@ -60,7 +79,7 @@ namespace NRConfigManager.Infrastructure.Cci
 
         public bool IsGenericType
         {
-            get { return _cciType.IsGeneric; }
+            get { return _cciType is IGenericTypeInstance; }
         }
 
         public IEnumerable<ITypeDetails> GenericArguments

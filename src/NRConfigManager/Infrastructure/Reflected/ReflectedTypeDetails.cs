@@ -17,6 +17,11 @@ namespace NRConfigManager.Infrastructure.Reflected
             get { return new ReflectedAssemblyDetails(_type.Assembly); }
         }
 
+        public string Namespace
+        {
+            get { return _type.Namespace; }
+        }
+
         public string Name
         {
             get { return _type.Name; }

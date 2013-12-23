@@ -11,6 +11,7 @@ namespace NRConfigManager.Infrastructure
     {
         IAssemblyDetails Assembly { get; }
 
+        string Namespace { get; }
         string Name { get; }
         string FullName { get; }
         bool IsGenericParameter { get; }
