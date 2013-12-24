@@ -94,7 +94,7 @@ namespace NRConfigManager.Infrastructure.Cci
                 return
                     (_cciType as IGenericTypeInstance)
                     .GenericArguments
-                    .Select(x => new CciTypeDetails((INamedTypeDefinition) x.ResolvedType));
+                    .Select(x => new CciTypeDetails((ITypeDefinition) x.ResolvedType));
             }
         }
 
