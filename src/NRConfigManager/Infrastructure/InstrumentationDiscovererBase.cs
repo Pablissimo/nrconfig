@@ -159,10 +159,10 @@ namespace NRConfigManager.Infrastructure
                         toReturn.Add(GetInstrumentationTarget(constructorDetails, attr));
                     }
                 }
-
-                
+                                
                 // Process nested types recursively, rather than enumerating them from the get-go so that we can apply
-                // instrumentation scoping easier
+                // instrumentation scoping recursively too - the nested class will take on the instrumentation configuration
+                // of the containing type, if any, or whatever's been passed down by initial settings
                 foreach (var nested in t.GetNestedTypes(BindingFlags.Public | BindingFlags.NonPublic))
                 {
                     toReturn.AddRange(GetInstrumentationSet(nested, typeLevelAttribute));

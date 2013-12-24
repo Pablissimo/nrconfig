@@ -1,4 +1,5 @@
 ﻿using NRConfig;
+using NRConfigManager.Infrastructure.Reflected.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,33 +18,7 @@ namespace NRConfigManager.Infrastructure.Reflected
         {
             get
             {
-                // Since we might have assy version differences, we're stuck buggering about with reflection
-                Attribute matchingAttribute = _memberInfo.GetCustomAttributes(false).OfType<Attribute>().FirstOrDefault(x => x.GetType().Name.EndsWith("InstrumentAttribute"));
-
-                InstrumentAttribute toReturn = null;
-
-                if (matchingAttribute != null)
-                {
-                    toReturn = new InstrumentAttribute();
-                    Type matchingAttributeType = matchingAttribute.GetType();
-                    foreach (var prop in matchingAttributeType.GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance))
-                    {
-                        PropertyInfo equivalentProperty = typeof(InstrumentAttribute).GetProperty(prop.Name);
-                        if (equivalentProperty != null)
-                        {
-                            if (prop.PropertyType.IsEnum)
-                            {
-                                equivalentProperty.SetValue(toReturn, Convert.ToInt32(prop.GetValue(matchingAttribute)));
-                            }
-                            else
-                            {
-                                equivalentProperty.SetValue(toReturn, prop.GetValue(matchingAttribute));
-                            }
-                        }
-                    }
-                }
-
-                return toReturn;
+                return _memberInfo.GetInstrumentAttribute();
             }
         }
 

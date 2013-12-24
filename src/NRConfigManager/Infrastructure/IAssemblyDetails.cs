@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NRConfigManager.Infrastructure
 {
-    public interface IAssemblyDetails
+    public interface IAssemblyDetails : IInstrumentable
     {
         string FullName { get; }
         string Name { get; }

@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -115,6 +116,7 @@
     <Compile Include="Infrastructure\Cci\CciPropertyDetails.cs" />
     <Compile Include="Infrastructure\Cci\CciReferenceDetails.cs" />
     <Compile Include="Infrastructure\Cci\CciTypeDetails.cs" />
+    <Compile Include="Infrastructure\Cci\Extensions\ReferenceExtensions.cs" />
     <Compile Include="Infrastructure\IAssemblyDetails.cs" />
     <Compile Include="Infrastructure\IConstructorDetails.cs" />
     <Compile Include="Infrastructure\IInstrumentable.cs" />
@@ -124,6 +126,7 @@
     <Compile Include="Infrastructure\IParameterDetails.cs" />
     <Compile Include="Infrastructure\IPropertyDetails.cs" />
     <Compile Include="Infrastructure\ITypeDetails.cs" />
+    <Compile Include="Infrastructure\Reflected\Extensions\AttributeProviderExtensions.cs" />
     <Compile Include="Infrastructure\Reflected\ReflectedAssemblyDetails.cs" />
     <Compile Include="Infrastructure\Reflected\ReflectedConstructorDetails.cs" />
     <Compile Include="Infrastructure\Reflected\ReflectedInstrumentationDiscoverer.cs" />

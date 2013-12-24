@@ -1,4 +1,6 @@
 ﻿using Microsoft.Cci;
+using NRConfig;
+using NRConfigManager.Infrastructure.Cci.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +21,24 @@ namespace NRConfigManager.Infrastructure.Cci
         public string Name
         {
             get { return _unit.UnitIdentity.Name.Value; }
+        }
+        
+        public ITypeDetails DeclaringType
+        {
+            get { return null; }
+        }
+
+        public NRConfig.InstrumentAttribute InstrumentationContext
+        {
+            get 
+            {
+                return _unit.GetInstrumentAttribute();
+            }
+        }
+
+        public bool IsCompilerGenerated
+        {
+            get { return false; }
         }
 
         public CciAssemblyDetails(IUnit unit)
