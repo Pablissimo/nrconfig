@@ -29,9 +29,16 @@ namespace NRConfigManager.Infrastructure
             var allTypes = this.GetTypes(assemblyPath).Where(x => x.IsClass && !x.IsNested && typeFilter(x));
             _logger.DebugFormat("Found {0} types", allTypes.Count());
 
+            InstrumentAttribute assyContext = null;
+
+            if (allTypes.Any())
+            {
+                assyContext = allTypes.First().Assembly.InstrumentationContext;
+            }
+
             foreach (var t in allTypes)
             {
-                toReturn.AddRange(GetInstrumentationSet(t, context));
+                toReturn.AddRange(GetInstrumentationSet(t, GetEffectiveInstrumentationContext(assyContext, context)));
             }
 
             return toReturn;
