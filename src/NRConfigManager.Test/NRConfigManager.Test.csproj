@@ -59,6 +59,7 @@
     <Compile Include="Infrastructure\InstrumentationDiscovererBaseTest.cs" />
     <Compile Include="Infrastructure\InstrumentationTargetTest.cs" />
     <Compile Include="Infrastructure\Support\DummyAssembly.cs" />
+    <Compile Include="Infrastructure\Support\DummyMethodDetails.cs" />
     <Compile Include="Infrastructure\Support\DummyTypeDetails.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rendering\ExtensionTest.cs" />

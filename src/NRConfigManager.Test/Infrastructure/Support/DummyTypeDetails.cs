@@ -20,6 +20,11 @@ namespace NRConfigManager.Test.Infrastructure.Support
         BindingFlags _lastGetPropertiesFlags;
         BindingFlags _lastGetNestedTypesFlags;
 
+        public BindingFlags LastGetMethodsFlags { get { return _lastGetMethodsFlags; } }
+        public BindingFlags LastGetConstructorsFlags { get { return _lastGetConstructorsFlags; } }
+        public BindingFlags LastGetPropertiesFlags { get { return _lastGetPropertiesFlags; } }
+        public BindingFlags LastGetNestedTypesFlags { get { return _lastGetNestedTypesFlags; } }
+
         public DummyTypeDetails(string fullname)
         {
             this.FullName = fullname;

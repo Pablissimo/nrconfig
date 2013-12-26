@@ -42,11 +42,11 @@ namespace TestSupport
                 var obj1Value = prop.GetValue(obj1);
                 var obj2Value = prop.GetValue(obj2);
 
-                if (obj1 == null && obj2 == null)
+                if (obj1Value == null && obj2Value == null)
                 {
                     // Nothing more to do with this property
                 }
-                else if ((obj1 == null && obj2 != null) || (obj2 == null && obj1 != null))
+                else if ((obj1Value == null && obj2Value != null) || (obj2Value == null && obj1Value != null))
                 {
                     // If one value's null and the other isn't, the two objects clearly
                     // aren't equivalent
