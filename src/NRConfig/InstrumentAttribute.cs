@@ -63,5 +63,79 @@ namespace NRConfig
             this.MetricName = metricName;
             this.Metric = metric;
         }
+
+        /// <summary>
+        /// Generates an instrumentation context that represents the configuration supplied by an ordered
+        /// collection of contexts, where contexts earlier in the list take higher precedence.
+        /// </summary>
+        /// <param name="attrs">Zero or more InstrumentAttribute objects representing full or partial
+        /// contexts to be combined.</param>
+        /// <returns>An InstrumentAttribute representing the context that best describes the supplied
+        /// hierarchy of full or partial contexts.</returns>
+        public static InstrumentAttribute GetEffectiveInstrumentationContext(params InstrumentAttribute[] attrs)
+        {
+            // Working through the array, assuming that the top-most items are the most important
+            InstrumentAttribute toReturn = new InstrumentAttribute();
+            bool setMetricName = false, setMetric = false, setScopes = false, setIncludeCompilerGenerated = false;
+
+            if (attrs != null)
+            {
+                foreach (var attr in attrs)
+                {
+                    if (attr == null)
+                    {
+                        continue;
+                    }
+                    else if (setMetricName && setMetric && setIncludeCompilerGenerated && setScopes)
+                    {
+                        break;
+                    }
+
+                    if (attr.MetricName != null && !setMetricName)
+                    {
+                        toReturn.MetricName = attr.MetricName;
+                        setMetricName = true;
+                    }
+
+                    if (attr.Metric != Metric.Unspecified && !setMetric)
+                    {
+                        toReturn.Metric = attr.Metric;
+                        setMetric = true;
+                    }
+
+                    if (!setScopes)
+                    {
+                        toReturn.Scopes = attr.Scopes;
+                        setScopes = true;
+                    }
+
+                    if (attr.IncludeCompilerGeneratedCodeSet && !setIncludeCompilerGenerated)
+                    {
+                        toReturn.IncludeCompilerGeneratedCode = attr.IncludeCompilerGeneratedCode;
+                        setIncludeCompilerGenerated = true;
+                    }
+                }
+            }
+
+            bool anyNonNullAttrs = false;
+            if (attrs != null)
+            {
+                foreach (var attr in attrs)
+                {
+                    if (attr != null)
+                    {
+                        anyNonNullAttrs = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!anyNonNullAttrs)
+            {
+                toReturn = null;
+            }
+
+            return toReturn;
+        }
     }
 }

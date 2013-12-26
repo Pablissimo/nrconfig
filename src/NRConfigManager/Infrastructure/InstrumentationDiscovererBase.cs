@@ -38,7 +38,7 @@ namespace NRConfigManager.Infrastructure
 
             foreach (var t in allTypes)
             {
-                toReturn.AddRange(GetInstrumentationSet(t, GetEffectiveInstrumentationContext(assyContext, context)));
+                toReturn.AddRange(GetInstrumentationSet(t, InstrumentAttribute.GetEffectiveInstrumentationContext(assyContext, context)));
             }
 
             return toReturn;
@@ -52,7 +52,7 @@ namespace NRConfigManager.Infrastructure
             {
                 // Does the type have an Instrument attribute?
                 var typeLevelAttribute = t.InstrumentationContext;
-                typeLevelAttribute = GetEffectiveInstrumentationContext(typeLevelAttribute, context);
+                typeLevelAttribute = InstrumentAttribute.GetEffectiveInstrumentationContext(typeLevelAttribute, context);
 
                 if (t.IsCompilerGenerated && (typeLevelAttribute == null || !typeLevelAttribute.IncludeCompilerGeneratedCode))
                 {
@@ -113,7 +113,7 @@ namespace NRConfigManager.Infrastructure
                 {
                     _logger.DebugFormat("Examining method {0}", methodDetails.ToString());
 
-                    var attr = GetEffectiveInstrumentationContext(methodDetails.InstrumentationContext, typeLevelAttribute);
+                    var attr = InstrumentAttribute.GetEffectiveInstrumentationContext(methodDetails.InstrumentationContext, typeLevelAttribute);
                     if (attr != null && (!methodDetails.IsCompilerGenerated || attr.IncludeCompilerGeneratedCode))
                     {
                         toReturn.Add(GetInstrumentationTarget(methodDetails, attr));
@@ -139,7 +139,7 @@ namespace NRConfigManager.Infrastructure
 
                     if (getMethod != null)
                     {
-                        var getMethodAttr = GetEffectiveInstrumentationContext(propertyDetails.InstrumentationContext, getMethod.InstrumentationContext, typeLevelAttribute);
+                        var getMethodAttr = InstrumentAttribute.GetEffectiveInstrumentationContext(propertyDetails.InstrumentationContext, getMethod.InstrumentationContext, typeLevelAttribute);
                         if (getMethodAttr != null)
                         {
                             toReturn.Add(GetInstrumentationTarget(getMethod, getMethodAttr));
@@ -148,7 +148,7 @@ namespace NRConfigManager.Infrastructure
 
                     if (setMethod != null)
                     {
-                        var setMethodAttr = GetEffectiveInstrumentationContext(propertyDetails.InstrumentationContext, setMethod.InstrumentationContext, typeLevelAttribute);
+                        var setMethodAttr = InstrumentAttribute.GetEffectiveInstrumentationContext(propertyDetails.InstrumentationContext, setMethod.InstrumentationContext, typeLevelAttribute);
                         if (setMethodAttr != null)
                         {
                             toReturn.Add(GetInstrumentationTarget(setMethod, setMethodAttr));
@@ -160,7 +160,7 @@ namespace NRConfigManager.Infrastructure
                 {
                     _logger.DebugFormat("Examining method {0}", constructorDetails.ToString());
 
-                    var attr = GetEffectiveInstrumentationContext(constructorDetails.InstrumentationContext, typeLevelAttribute);
+                    var attr = InstrumentAttribute.GetEffectiveInstrumentationContext(constructorDetails.InstrumentationContext, typeLevelAttribute);
                     if (attr != null)
                     {
                         toReturn.Add(GetInstrumentationTarget(constructorDetails, attr));
@@ -178,64 +178,6 @@ namespace NRConfigManager.Infrastructure
             else
             {
                 _logger.DebugFormat("Skipping type {0} - generic types not supported", t.FullName);
-            }
-
-            return toReturn;
-        }
-
-        /// <summary>
-        /// Generates an instrumentation context that represents the configuration supplied by an ordered
-        /// collection of contexts, where contexts earlier in the list take higher precedence.
-        /// </summary>
-        /// <param name="attrs">Zero or more InstrumentAttribute objects representing full or partial
-        /// contexts to be combined.</param>
-        /// <returns>An InstrumentAttribute representing the context that best describes the supplied
-        /// hierarchy of full or partial contexts.</returns>
-        protected virtual InstrumentAttribute GetEffectiveInstrumentationContext(params InstrumentAttribute[] attrs)
-        {
-            // Working through the array, assuming that the top-most items are the most important
-            InstrumentAttribute toReturn = new InstrumentAttribute();
-            bool setMetricName = false, setMetric = false, setScopes = false, setIncludeCompilerGenerated = false;
-
-            foreach (var attr in attrs)
-            {
-                if (attr == null)
-                {
-                    continue;
-                }
-                else if (setMetricName && setMetric)
-                {
-                    break;
-                }
-
-                if (attr.MetricName != null && !setMetricName)
-                {
-                    toReturn.MetricName = attr.MetricName;
-                    setMetricName = true;
-                }
-
-                if (attr.Metric != Metric.Unspecified && !setMetric)
-                {
-                    toReturn.Metric = attr.Metric;
-                    setMetric = true;
-                }
-
-                if (!setScopes)
-                {
-                    toReturn.Scopes = attr.Scopes;
-                    setScopes = true;
-                }
-
-                if (attr.IncludeCompilerGeneratedCodeSet && !setIncludeCompilerGenerated)
-                {
-                    toReturn.IncludeCompilerGeneratedCode = attr.IncludeCompilerGeneratedCode;
-                    setIncludeCompilerGenerated = true;
-                }
-            }
-
-            if (attrs == null || !attrs.Any(x => x != null))
-            {
-                toReturn = null;
             }
 
             return toReturn;

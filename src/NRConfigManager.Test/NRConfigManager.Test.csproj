@@ -56,19 +56,12 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <None Include="Infrastructure\InstrumentationDiscovererTest.cs" />
+    <Compile Include="Infrastructure\InstrumentationDiscovererBaseTest.cs" />
+    <Compile Include="Infrastructure\InstrumentationTargetTest.cs" />
+    <Compile Include="Infrastructure\Support\DummyAssembly.cs" />
+    <Compile Include="Infrastructure\Support\DummyTypeDetails.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rendering\ExtensionTest.cs" />
-    <None Include="Rendering\RendererTest.cs" />
-    <Compile Include="TestClasses\ClassLevelImplicitMarkup.cs" />
-    <Compile Include="TestClasses\CompilerGeneratedClass.cs" />
-    <Compile Include="TestClasses\ExplicitMarkup.cs" />
-    <Compile Include="TestClasses\ExplicitMarkupCompilerGeneratedClass.cs" />
-    <Compile Include="TestClasses\GenericsTest.cs" />
-    <Compile Include="TestClasses\HidingMethods.cs" />
-    <Compile Include="TestClasses\HidingProperties.cs" />
-    <Compile Include="TestClasses\IndexerProperties.cs" />
-    <Compile Include="TestClasses\MixedMarkup.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NRConfigManager\NRConfigManager.csproj">
@@ -79,10 +72,15 @@
       <Project>{33536e8a-988a-4c6f-97cc-b708c8de2978}</Project>
       <Name>NRConfig</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TestSupport\TestSupport.csproj">
+      <Project>{2087319a-d8df-4e06-9d7e-9ef3d0e2e38d}</Project>
+      <Name>TestSupport</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="NRConfig.snk" />
   </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
