@@ -121,6 +121,7 @@
     <Compile Include="Extensions\TypeDefinitionMemberExtensionsTests.cs" />
     <Compile Include="Infrastructure\InstrumentationDiscovererBaseTest.cs" />
     <Compile Include="Infrastructure\InstrumentationTargetTest.cs" />
+    <Compile Include="Infrastructure\OutputComparisonTests.cs" />
     <Compile Include="Infrastructure\Support\DummyAssembly.cs" />
     <Compile Include="Infrastructure\Support\DummyMethodDetails.cs" />
     <Compile Include="Infrastructure\Support\DummyTypeDetails.cs" />
@@ -136,6 +137,10 @@
     <ProjectReference Include="..\NRConfig\NRConfig.csproj">
       <Project>{33536e8a-988a-4c6f-97cc-b708c8de2978}</Project>
       <Name>NRConfig</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TestAssembly\TestAssembly.csproj">
+      <Project>{46397d10-7919-406b-a55b-ec8e4c86dc58}</Project>
+      <Name>TestAssembly</Name>
     </ProjectReference>
     <ProjectReference Include="..\TestSupport\TestSupport.csproj">
       <Project>{2087319a-d8df-4e06-9d7e-9ef3d0e2e38d}</Project>

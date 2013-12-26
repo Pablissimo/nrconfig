@@ -59,11 +59,11 @@ namespace NRConfigManager.Infrastructure.Cci
             {
                 if (_cciType is INestedTypeDefinition)
                 {
-                    return TypeHelper.GetTypeName(((INestedTypeDefinition)_cciType).ContainingTypeDefinition, NameFormattingOptions.OmitTypeArguments | NameFormattingOptions.PreserveSpecialNames) + "+" + TypeHelper.GetTypeName(_cciType, NameFormattingOptions.OmitContainingNamespace | NameFormattingOptions.OmitContainingType);
+                    return TypeHelper.GetTypeName(((INestedTypeDefinition)_cciType).ContainingTypeDefinition, NameFormattingOptions.OmitTypeArguments | NameFormattingOptions.PreserveSpecialNames | NameFormattingOptions.UseGenericTypeNameSuffix) + "+" + TypeHelper.GetTypeName(_cciType, NameFormattingOptions.OmitContainingNamespace | NameFormattingOptions.OmitContainingType | NameFormattingOptions.UseGenericTypeNameSuffix);
                 }
                 else
                 {
-                    return TypeHelper.GetTypeName(_cciType, NameFormattingOptions.OmitTypeArguments | NameFormattingOptions.PreserveSpecialNames);
+                    return TypeHelper.GetTypeName(_cciType, NameFormattingOptions.OmitTypeArguments | NameFormattingOptions.PreserveSpecialNames | NameFormattingOptions.UseGenericTypeNameSuffix);
                 }
             }
         }

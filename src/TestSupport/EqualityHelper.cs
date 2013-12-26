@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -64,10 +65,30 @@ namespace TestSupport
                             return false;
                         }
                     }
+                    else if (typeof(IEnumerable).IsAssignableFrom(prop.PropertyType))
+                    {
+                        var obj1Enumerable = ((IEnumerable)obj1Value).Cast<object>().ToList();
+                        var obj2Enumerable = ((IEnumerable)obj2Value).Cast<object>().ToList();
+
+                        if (obj1Enumerable.Count() != obj2Enumerable.Count())
+                        {
+                            return false;
+                        }
+                        else 
+                        {
+                            for (int i = 0; i < obj1Enumerable.Count(); i++)
+                            {
+                                if (!AreObjectsEquivalentByPublicProperties(obj1Enumerable[i], obj2Enumerable[i], alsoInherited))
+                                {
+                                    return false;
+                                }
+                            }
+                        }
+                    }
                     else
                     {
                         // Complex type so we're recursing
-                        bool equivalent = AreObjectsEquivalentByPublicProperties(obj1Value, obj2Value);
+                        bool equivalent = AreObjectsEquivalentByPublicProperties(obj1Value, obj2Value, alsoInherited);
                         if (!equivalent)
                         {
                             return false;

@@ -29,7 +29,21 @@ namespace NRConfigManager.Infrastructure.Reflected
 
         public string FullName
         {
-            get { return _type.FullName; }
+            get 
+            {
+                if (_type.FullName != null)
+                {
+                    return _type.FullName;
+                }
+                else if (_type.IsGenericParameter)
+                {
+                    return _type.Name;
+                }
+                else
+                {
+                    return string.Format("{0}.{1}", _type.Namespace, _type.Name); 
+                }
+            }
         }
 
         public bool IsGenericParameter
@@ -70,9 +84,27 @@ namespace NRConfigManager.Infrastructure.Reflected
 
         public IEnumerable<IMethodDetails> GetMethods(System.Reflection.BindingFlags bindingFlags)
         {
+            Func<MethodInfo, EventInfo, bool> excludeEvents =
+                (method, @event) =>
+                {
+                    return
+                        @event.AddMethod != null && @event.AddMethod == method
+                        || @event.RemoveMethod != null && @event.RemoveMethod == method;
+                };
+
+            Func<MethodInfo, PropertyInfo, bool> excludeProperties =
+                (method, property) =>
+                {
+                    return (property.CanRead && property.GetMethod == method)
+                    || (property.CanWrite && property.SetMethod == method);
+                };
+
+            var propAndEventFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
+
             return
                 _type
                 .GetMethods(bindingFlags)
+                .Where(x => !x.IsConstructor && !_type.GetProperties(propAndEventFlags).Any(p => excludeProperties(x, p)) && !_type.GetEvents(propAndEventFlags).Any(e => excludeEvents(x, e)))
                 .Select(x => new ReflectedMethodDetails(x));
         }
 
