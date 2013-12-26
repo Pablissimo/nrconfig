@@ -126,6 +126,9 @@
     <Compile Include="Infrastructure\Support\DummyMethodDetails.cs" />
     <Compile Include="Infrastructure\Support\DummyTypeDetails.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rendering\DiscovererSpecific\CciRendererCorrectnessTests.cs" />
+    <Compile Include="Rendering\DiscovererSpecific\ReflectedRendererCorrectnessTests.cs" />
+    <Compile Include="Rendering\DiscovererSpecific\RendererCorrectnessTestBase.cs" />
     <Compile Include="Rendering\ExactMethodMatcherTest.cs" />
     <Compile Include="Rendering\ExtensionTest.cs" />
   </ItemGroup>

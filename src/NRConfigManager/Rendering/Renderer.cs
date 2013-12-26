@@ -135,30 +135,10 @@ namespace NRConfigManager.Rendering
                     {
                         tempParamTypeNames.Add(GetGenericParameterTypeName(parameter.Type, genericArgs));
                     }
-                    /*
-                    if (parameter.Type.IsGenericParameter)
+                    else if (parameter.Type.IsGenericParameter)
                     {
-                        int matchingIdx = -1;
-                        for (int i = 0; i < genericArgs.Length; i++)
-                        {
-                            var t = genericArgs[i];
-
-                            if (t.Name == parameter.Type.Name)
-                            {
-                                matchingIdx = i;
-                            }
-                        }
-
-                        if (matchingIdx > -1)
-                        {
-                            tempParamTypeNames.Add(string.Format("<MVAR {0}>", matchingIdx));
-                        }
-                        else
-                        {
-                            throw new InvalidOperationException("Can't find the matching generic type parameter for argument " + parameter);
-                        }
+                        tempParamTypeNames.Add(string.Format("<{0}>", GetGenericParameterTypeName(parameter.Type, genericArgs)));
                     }
-                    */
                     else
                     {
                         tempParamTypeNames.Add(GetFriendlyTypeName(parameter.Type));

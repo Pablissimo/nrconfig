@@ -24,7 +24,7 @@ namespace TestAssembly.Generics
         {
         }
 
-        public void TwoParameterMethod<T, U>(T first, string middle, U second)
+        public void TwoParameterMethodThatIncludesNonGenericParameters<T, U>(T first, string middle, U second)
         {
         }
 
@@ -32,11 +32,11 @@ namespace TestAssembly.Generics
         {
         }
 
-        public void TwoParameterComplexMethod<T, U>(IEnumerable<U> first, Func<T, U, T> second)
+        public void TwoParameterComplexMethod<T, U>(IEnumerable<U> first, IList<T> second)
         {
         }
 
-        public void TwoParameterDoubleComplexMethod<T, U>(IEnumerable<U> first, Func<IEnumerable<T>, U, T> second)
+        public void TwoParameterDoubleComplexMethod<T, U>(IEnumerable<U> first, Func<IEnumerable<T>> second)
         {
         }
     }
