@@ -131,6 +131,11 @@ namespace NRConfigManager.Rendering
                 List<string> tempParamTypeNames = new List<string>();
                 foreach (var parameter in parameters)
                 {
+                    if (parameter.Type.IsGenericType)
+                    {
+                        tempParamTypeNames.Add(GetGenericParameterTypeName(parameter.Type, genericArgs));
+                    }
+                    /*
                     if (parameter.Type.IsGenericParameter)
                     {
                         int matchingIdx = -1;
@@ -153,6 +158,7 @@ namespace NRConfigManager.Rendering
                             throw new InvalidOperationException("Can't find the matching generic type parameter for argument " + parameter);
                         }
                     }
+                    */
                     else
                     {
                         tempParamTypeNames.Add(GetFriendlyTypeName(parameter.Type));
@@ -182,6 +188,31 @@ namespace NRConfigManager.Rendering
             }
 
             return new ExactMethodMatcher(methodName, parameterTypeNames.ToArray());
+        }
+
+        private static string GetGenericParameterTypeName(ITypeDetails parameterType, IEnumerable<ITypeDetails> orderedTypeContext)
+        {
+            if (parameterType.IsGenericType)
+            {
+                return parameterType.FullName + "<" + string.Join(",", parameterType.GenericArguments.Select(x => GetGenericParameterTypeName(x, orderedTypeContext))) + ">";
+            }
+            else
+            {
+                // Is this something that's in our context?
+                int idx = 0;
+                foreach (var genericArgument in orderedTypeContext)
+                {
+                    if (genericArgument.Equals(parameterType))
+                    {
+                        return string.Format("MVAR {0}", idx);
+                    }
+
+                    idx++;
+                }
+            }
+
+            // Fall back to standard process
+            return GetFriendlyTypeName(parameterType);
         }
 
         private static string GetFriendlyTypeName(ITypeDetails t)

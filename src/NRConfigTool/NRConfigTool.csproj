@@ -98,7 +98,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <PropertyGroup>
-    <PostBuildEvent>$(ProjectDir)ilmerge /ndebug /targetplatform:v4,C:\windows\microsoft.net\framework\v4.0.30319 /out:$(TargetDir)nrconfig.exe $(TargetDir)NRConfigTool.exe $(TargetDir)BizArk.Core.dll $(TargetDir)log4net.dll $(TargetDir)NRConfig.dll $(TargetDir)NRConfigManager.dll /keyfile:$(SolutionDir)NRConfig.snk
+    <PostBuildEvent>$(ProjectDir)ilmerge /ndebug /targetplatform:v4,C:\windows\microsoft.net\framework\v4.0.30319 /out:$(TargetDir)nrconfig.exe $(TargetDir)NRConfigTool.exe $(TargetDir)Microsoft.Cci.MetadataHelper.dll $(TargetDir)Microsoft.Cci.MetadataModel.dll $(TargetDir)Microsoft.Cci.PeReader.dll $(TargetDir)BizArk.Core.dll $(TargetDir)log4net.dll $(TargetDir)NRConfig.dll $(TargetDir)NRConfigManager.dll /keyfile:$(SolutionDir)NRConfig.snk
 </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

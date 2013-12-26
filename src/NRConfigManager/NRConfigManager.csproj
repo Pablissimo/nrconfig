@@ -117,6 +117,7 @@
     <Compile Include="Infrastructure\Cci\CciReferenceDetails.cs" />
     <Compile Include="Infrastructure\Cci\CciTypeDetails.cs" />
     <Compile Include="Infrastructure\Cci\Extensions\ReferenceExtensions.cs" />
+    <Compile Include="Infrastructure\Cci\Extensions\TypeDefinitionMemberExtensions.cs" />
     <Compile Include="Infrastructure\IAssemblyDetails.cs" />
     <Compile Include="Infrastructure\IConstructorDetails.cs" />
     <Compile Include="Infrastructure\IInstrumentable.cs" />

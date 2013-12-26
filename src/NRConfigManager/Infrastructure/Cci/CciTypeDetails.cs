@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using NRConfigManager.Infrastructure.Cci.Extensions;
 
 namespace NRConfigManager.Infrastructure.Cci
 {
@@ -123,11 +124,20 @@ namespace NRConfigManager.Infrastructure.Cci
                         || setter != null && setter.InternedKey == method.InternedKey;
                 };
 
-            return 
+            Func<IMethodDefinition, IEventDefinition, bool> excludeEvents =
+                (method, @event) =>
+                {
+                    return @event.Accessors.Any(x => x.InternedKey == method.InternedKey);
+                };
+
+            var methods = 
                 _cciType
                 .Methods
-                .Where(method => !method.IsConstructor && MatchesFlags(method, bindingFlags) && !_cciType.Properties.Any(property => excludeProperty(method, property)))
-                .Select(method => new Cci.CciMethodDetails(method));
+                .Where(method => !method.IsConstructor && method.MatchesFlags(bindingFlags) && !_cciType.Properties.Any(property => excludeProperty(method, property)) && !_cciType.Events.Any(@event => excludeEvents(method, @event)))
+                .Select(method => new Cci.CciMethodDetails(method))
+                .ToList();
+
+            return methods;
         }
 
         public IEnumerable<IPropertyDetails> GetProperties(System.Reflection.BindingFlags bindingFlags)
@@ -135,7 +145,7 @@ namespace NRConfigManager.Infrastructure.Cci
             return
                 _cciType
                 .Properties
-                .Where(property => MatchesFlags(property, bindingFlags))
+                .Where(property => property.MatchesFlags(bindingFlags))
                 .Select(property => new Cci.CciPropertyDetails(property));
         }
 
@@ -144,7 +154,7 @@ namespace NRConfigManager.Infrastructure.Cci
             return
                 _cciType
                 .Methods
-                .Where(method => method.IsConstructor && MatchesFlags(method, bindingFlags))
+                .Where(method => method.IsConstructor && method.MatchesFlags(bindingFlags))
                 .Select(method => new Cci.CciConstructorDetails(method));
         }
 
@@ -153,23 +163,8 @@ namespace NRConfigManager.Infrastructure.Cci
             return
                 _cciType
                 .NestedTypes
-                .Where(x => MatchesFlags(x, bindingFlags))
+                .Where(x => x.MatchesFlags(bindingFlags))
                 .Select(x => new Cci.CciTypeDetails(x));
-        }
-
-        private bool MatchesFlags(ITypeDefinitionMember defn, BindingFlags bindingFlags)
-        {
-            var defnSignature = defn as ISignature;
-
-            bool isPublic = (defn.Visibility & TypeMemberVisibility.Public) == TypeMemberVisibility.Public;
-            bool isStatic = (defnSignature != null ? defnSignature.IsStatic : false);
-
-            bool mayBeNonPublic = (bindingFlags & BindingFlags.NonPublic) == BindingFlags.NonPublic;
-            bool mayBePublic = (bindingFlags & BindingFlags.Public) == BindingFlags.Public;
-            bool mayBeInstance = (bindingFlags & BindingFlags.Instance) == BindingFlags.Instance;
-            bool mayBeStatic = (bindingFlags & BindingFlags.Static) == BindingFlags.Static;
-
-            return (mayBePublic && isPublic) || (mayBeNonPublic && !isPublic) || (mayBeInstance && !isStatic) || (mayBeStatic && isStatic);
         }
 
         public override string ToString()
