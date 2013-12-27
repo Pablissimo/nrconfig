@@ -40,6 +40,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestAssembly", "TestAssembl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuGetPackage-MSBuild", "NuGetPackage-MSBuild\NuGetPackage-MSBuild.csproj", "{E3FEBD33-C680-48DB-8FD3-38E40931D16E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packaging", "Packaging", "{A1E1C1B5-C798-4877-9ACC-C17B20FE3C27}"
+	ProjectSection(SolutionItems) = preProject
+		PackageForNuget.bat = PackageForNuget.bat
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

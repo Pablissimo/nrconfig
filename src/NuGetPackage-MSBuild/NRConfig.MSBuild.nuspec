@@ -14,7 +14,7 @@
     <tags>NewRelic New Relic Configuration Tool</tags>
 
     <dependencies>
-      <dependency id="NRConfig.Tool" version="1.4.0.0" />
+      <dependency id="NRConfig.Tool" version="[1.4.0.0]" />
     </dependencies>
   </metadata>
 </package>
