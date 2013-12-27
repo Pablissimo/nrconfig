@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0"?>
 <package>
   <metadata>
-    <id>NRConfig.Tool</id>
+    <id>NRConfig.MSBuild</id>
     <version>1.4.0.0</version>
     <authors>Pablissimo</authors>
     <owners>Pablissimo</owners>
@@ -12,5 +12,9 @@
     <releaseNotes>Initial release.</releaseNotes>
     <copyright>Copyright 2013 Paul O'Neill</copyright>
     <tags>NewRelic New Relic Configuration Tool</tags>
+
+    <dependencies>
+      <dependency id="NRConfig.Tool" version="1.4.0.0" />
+    </dependencies>
   </metadata>
 </package>
