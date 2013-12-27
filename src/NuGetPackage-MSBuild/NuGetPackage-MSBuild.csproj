@@ -45,7 +45,7 @@
     <Content Include="LICENCE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="build\NRConfig.Tool.targets">
+    <None Include="build\NRConfig.MSBuild.targets">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
