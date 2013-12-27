@@ -12,7 +12,11 @@ namespace TestAssembly.Inheritance
         {
         }
 
-        public virtual void VirtualMethod(string parameter)
+        public virtual void VirtualMethod1(string parameter)
+        {
+        }
+
+        public virtual void VirtualMethod2(string parameter)
         {
         }
 

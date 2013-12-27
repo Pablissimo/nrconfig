@@ -104,7 +104,7 @@ namespace NRConfigManager.Infrastructure.Reflected
             return
                 _type
                 .GetMethods(bindingFlags)
-                .Where(x => !x.IsConstructor && !_type.GetProperties(propAndEventFlags).Any(p => excludeProperties(x, p)) && !_type.GetEvents(propAndEventFlags).Any(e => excludeEvents(x, e)))
+                .Where(x => !x.IsConstructor && !x.IsAbstract && !_type.GetProperties(propAndEventFlags).Any(p => excludeProperties(x, p)) && !_type.GetEvents(propAndEventFlags).Any(e => excludeEvents(x, e)))
                 .Select(x => new ReflectedMethodDetails(x));
         }
 

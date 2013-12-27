@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace TestAssembly.Inheritance
 {
-    public class Subclass : BaseClass
+    public class SubSubclass : Subclass
     {
         public override void VirtualMethod1(string parameter)
         {
-            
+            base.VirtualMethod1(parameter);
         }
 
-        public override void AbstractMethod()
+        public override void VirtualMethod2(string parameter)
         {
             
         }

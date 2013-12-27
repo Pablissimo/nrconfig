@@ -8,7 +8,7 @@ namespace TestAssembly.Generics
 {
     public class GenericClass<T>
     {
-        public void Method<T>()
+        public void Method<U>()
         {
         }
 

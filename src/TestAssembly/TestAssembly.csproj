@@ -51,8 +51,10 @@
     <Compile Include="Generics\GenericMethods.cs" />
     <Compile Include="Inheritance\BaseClass.cs" />
     <Compile Include="Inheritance\Subclass.cs" />
+    <Compile Include="Inheritance\SubSubclass.cs" />
     <Compile Include="NonPublic\InternalClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Simple\ImplicitConstructorExplicitStaticConstructor.cs" />
     <Compile Include="Simple\SimpleClass.cs" />
   </ItemGroup>
   <ItemGroup>

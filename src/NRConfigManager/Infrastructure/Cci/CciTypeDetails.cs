@@ -133,7 +133,7 @@ namespace NRConfigManager.Infrastructure.Cci
             var methods = 
                 _cciType
                 .Methods
-                .Where(method => !method.IsConstructor && method.MatchesFlags(bindingFlags) && !_cciType.Properties.Any(property => excludeProperty(method, property)) && !_cciType.Events.Any(@event => excludeEvents(method, @event)))
+                .Where(method => !method.IsConstructor && !method.IsAbstract && method.MatchesFlags(bindingFlags) && !_cciType.Properties.Any(property => excludeProperty(method, property)) && !_cciType.Events.Any(@event => excludeEvents(method, @event)))
                 .Select(method => new Cci.CciMethodDetails(method))
                 .ToList();
 
