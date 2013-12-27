@@ -9,12 +9,14 @@
     First, build a custom instrumentation file for this project.
     -->
     <NewRelicCustomInstrumentationFileTask InputFiles="$(IntermediateOutputPath)$(TargetFileName)" OutputFile="$(IntermediateOutputPath)$(TargetName).CustomInstrumentation.xml" />
+  </Target>
 
+  <Target Name="MergeNewRelicCustomInstrumentationFiles" AfterTargets="Build">
     <!--
     Then turn all found custom instrumentation files (named as the above task would generated them) into a single, merged CustomInstrumentation.xml file
     for subsequent deployment.
     -->
-    <NewRelicCustomInstrumentationFileMergeTask InputFiles="$(IntermediateOutputPath)*.CustomInstrumentation.xml" OutputFile="$(IntermediateOutputPath)CustomInstrumentation.xml" />
+    <NewRelicCustomInstrumentationFileMergeTask InputFiles="$(OutputPath)*.CustomInstrumentation.xml" OutputFile="$(OutputPath)CustomInstrumentation.xml" />
   </Target>
 
   <ItemGroup>
