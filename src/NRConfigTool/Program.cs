@@ -73,27 +73,16 @@ namespace NewRelicConfigBuilder
             }
 
             DateTime start = DateTime.Now;
-            long bytesBefore = GC.GetTotalMemory(true);
-
-            int exitCode = 0;
+            
             switch (mode)
             {
                 case OperationMode.Create:
-                    exitCode = Environment.ExitCode = ProcessCreate(parsedArgs);
+                    Environment.ExitCode = ProcessCreate(parsedArgs);
                     break;
                 case OperationMode.Merge:
-                    exitCode = Environment.ExitCode = ProcessMerge(parsedArgs);
+                    Environment.ExitCode = ProcessMerge(parsedArgs);
                     break;
             }
-
-            long bytesAfter = GC.GetTotalMemory(false);
-
-            if (exitCode == 0)
-            {
-                Console.WriteLine("Output written to {0} in {1:f2}s - memory allocated {2:n0}KB", parsedArgs.OutputFile, (DateTime.Now - start).TotalSeconds, (bytesAfter - bytesBefore) / 1024f);
-            }
-
-            Console.ReadLine();
 
             return Environment.ExitCode;
         }
