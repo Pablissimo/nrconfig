@@ -50,12 +50,12 @@ namespace NRConfigManager.Test.Rendering
         [TestMethod]
         public void Merge_CombinesExactMethodsMatchers_WhenContextSame()
         {
-            TracerFactory first = new TracerFactory("MetricName", Metric.Scoped);
+            TracerFactory first = new TracerFactory("MetricName", "Name", "1", Metric.Scoped);
             Match firstMatch = new Match() { AssemblyName = "Test", ClassName = "TestClass" };
             firstMatch.Matches.Add(new ExactMethodMatcher("TestMethod1", new[] { "ParamType1", "ParamType2" }));
             first.MatchDefinitions.Add(firstMatch);
 
-            TracerFactory second = new TracerFactory("MetricName", Metric.Scoped);
+            TracerFactory second = new TracerFactory("MetricName", "Name", "1", Metric.Scoped);
             Match secondMatch = new Match() { AssemblyName = firstMatch.AssemblyName, ClassName = firstMatch.ClassName };
             secondMatch.Matches.Add(new ExactMethodMatcher("TestMethod1", new[] { "ParamType3" }));
             second.MatchDefinitions.Add(secondMatch);
@@ -72,6 +72,8 @@ namespace NRConfigManager.Test.Rendering
 
             var firstFactory = merged.Instrumentation.TracerFactories.First();
             Assert.AreEqual("MetricName", firstFactory.MetricName);
+            Assert.AreEqual("Name", firstFactory.Name);
+            Assert.AreEqual("1", firstFactory.TransactionNamingPriority);
             Assert.AreEqual(Metric.Scoped, firstFactory.Metric);
             Assert.IsNotNull(firstFactory.MatchDefinitions);
 
@@ -98,7 +100,7 @@ namespace NRConfigManager.Test.Rendering
             firstMatch.Matches.Add(new ExactMethodMatcher("TestMethod1", new[] { "ParamType1", "ParamType2" }));
             first.MatchDefinitions.Add(firstMatch);
 
-            TracerFactory second = new TracerFactory("DifferentFactory", Metric.Scoped);
+            TracerFactory second = new TracerFactory("DifferentFactory", "TestFactory", "1", Metric.Scoped);
             Match secondMatch = new Match() { AssemblyName = firstMatch.AssemblyName, ClassName = firstMatch.ClassName };
             secondMatch.Matches.Add(new ExactMethodMatcher("TestMethod1", new[] { "ParamType1", "ParamType2" }));
             second.MatchDefinitions.Add(secondMatch);
@@ -113,6 +115,8 @@ namespace NRConfigManager.Test.Rendering
 
             Assert.AreEqual(2, merged.Instrumentation.TracerFactories.Count);
             Assert.AreEqual(1, merged.Instrumentation.TracerFactories.Count(x => x.MetricName == "DifferentFactory" && x.Metric == Metric.Scoped));
+            Assert.AreEqual(1, merged.Instrumentation.TracerFactories.Count(x => x.Name == "TestFactory" && x.Metric == Metric.Scoped));
+            Assert.AreEqual(1, merged.Instrumentation.TracerFactories.Count(x => x.TransactionNamingPriority == "1" && x.Metric == Metric.Scoped));
             Assert.AreEqual(1, merged.Instrumentation.TracerFactories.Count(x => x.Metric == Metric.Unspecified));
 
             var different = merged.Instrumentation.TracerFactories.Where(x => x.MetricName == "DifferentFactory").First();

@@ -43,6 +43,8 @@ namespace NRConfigManager.Rendering
                     {
                         Metric = factory.Metric,
                         MetricName = factory.MetricName,
+                        Name = factory.Name,
+                        TransactionNamingPriority = factory.TransactionNamingPriority,
                         AssemblyName = match.AssemblyName,
                         ClassName = match.ClassName
                     };
@@ -59,10 +61,10 @@ namespace NRConfigManager.Rendering
             }
 
             // Group the records by factory details, then by assy/classname pair
-            var keysByFactoryDetails = matchRecords.Keys.GroupBy(x => new { Metric = x.Metric, MetricName = x.MetricName });
+            var keysByFactoryDetails = matchRecords.Keys.GroupBy(x => new { Metric = x.Metric, MetricName = x.MetricName, Name = x.Name, TransactionNamingPriority = x.TransactionNamingPriority});
             foreach (var factoryDetail in keysByFactoryDetails)
             {
-                TracerFactory toAdd = new TracerFactory(factoryDetail.Key.MetricName, factoryDetail.Key.Metric);
+                TracerFactory toAdd = new TracerFactory(factoryDetail.Key.MetricName, factoryDetail.Key.Name, factoryDetail.Key.TransactionNamingPriority, factoryDetail.Key.Metric);
                 
                 var byClassDetail = factoryDetail.GroupBy(x => new { AssemblyName = x.AssemblyName, ClassName = x.ClassName });
                 foreach (var classDetail in byClassDetail)
@@ -73,6 +75,8 @@ namespace NRConfigManager.Rendering
                     {
                         Metric = toAdd.Metric,
                         MetricName = toAdd.MetricName,
+                        Name = toAdd.Name,
+                        TransactionNamingPriority = toAdd.TransactionNamingPriority,
                         AssemblyName = matchToAdd.AssemblyName,
                         ClassName = matchToAdd.ClassName
                     };
@@ -93,6 +97,8 @@ namespace NRConfigManager.Rendering
                 .TracerFactories
                 .OrderBy(x => x.Metric == Metric.Unspecified ? -1 : (int) x.Metric)
                 .ThenBy(x => x.MetricName ?? string.Empty)
+                .ThenBy(x => x.Name ?? string.Empty)
+                .ThenBy(x => x.TransactionNamingPriority ?? string.Empty)
                 .ToList();
 
             return toReturn;
@@ -102,6 +108,8 @@ namespace NRConfigManager.Rendering
         {
             public Metric Metric { get; set; }
             public string MetricName { get; set; }
+            public string Name { get; set; }
+            public string TransactionNamingPriority { get; set; }
             public string AssemblyName { get; set; }
             public string ClassName { get; set; }
 
@@ -117,6 +125,8 @@ namespace NRConfigManager.Rendering
                     return
                         this.Metric == other.Metric
                         && this.MetricName == other.MetricName
+                        && this.Name == other.Name
+                        && this.TransactionNamingPriority == other.TransactionNamingPriority
                         && this.AssemblyName == other.AssemblyName
                         && this.ClassName == other.ClassName;
                 }
@@ -127,8 +137,9 @@ namespace NRConfigManager.Rendering
                 return
                     this.Metric.GetHashCode() + 
                     (251 * (this.MetricName ?? "").GetHashCode() + 
+                    (251 * (this.Name ?? "").GetHashCode() + 
                     (251 * (this.AssemblyName ?? "").GetHashCode() + 
-                    (251 * (this.ClassName ?? "").GetHashCode())));
+                    (251 * (this.ClassName ?? "").GetHashCode()))));
             }
         }
     }

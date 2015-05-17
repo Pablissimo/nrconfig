@@ -14,6 +14,10 @@ namespace NRConfigManager.Rendering
     /// </summary>
     public class TracerFactory
     {
+        [XmlAttribute(AttributeName = "name")]
+        public string Name { get; set; }
+        [XmlAttribute(AttributeName = "transactionNamingPriority")]
+        public string TransactionNamingPriority { get; set; }
         [XmlAttribute(AttributeName="metricName")]
         public string MetricName { get; set; }
         [XmlAttribute(AttributeName="metric")]
@@ -27,9 +31,11 @@ namespace NRConfigManager.Rendering
             this.MatchDefinitions = new List<Match>();
         }
 
-        public TracerFactory(string metricName, Metric metric)
+        public TracerFactory(string metricName, string name, string transactionNamingPriority, Metric metric)
             : this()
         {
+            this.Name = name;
+            this.TransactionNamingPriority = transactionNamingPriority;
             this.MetricName = metricName;
             this.Metric = metric;
         }

@@ -32,45 +32,53 @@ namespace NRConfigManager.Rendering
             var byMetricName = targets.GroupBy(x => x.MetricName ?? string.Empty);
             foreach (var groupedByMetricName in byMetricName.OrderBy(x => x.Key))
             {
-                // Then group by metric
-                var byMetric = groupedByMetricName.GroupBy(x => x.Metric);
-                foreach (var groupedByMetric in byMetric.OrderBy(x => x.Key))
+                // Then by name
+                var byName = groupedByMetricName.GroupBy(x => x.Name ?? string.Empty);
+                foreach (var groupedByName in byName.OrderBy(x => x.Key))
                 {
-                    string metricName = groupedByMetricName.Key;
-                    if (metricName == string.Empty)
+                    // Then by priority
+                    var byPriority = groupedByName.GroupBy(x => x.TransactionNamingPriority ?? string.Empty);
+                    foreach (var groupedByPriority in byPriority.OrderBy(x => x.Key))
                     {
-                        metricName = null;
-                    }
-
-                    TracerFactory tracerFactory = new TracerFactory(metricName, groupedByMetric.Key);
-
-                    var byType = groupedByMetric.GroupBy(x => x.Target.DeclaringType);
-                    foreach (var groupedByType in byType.OrderBy(x => x.Key.Assembly.FullName).ThenBy(x => x.Key.FullName))
-                    {
-                        Match match = GetMatchFromType(groupedByType.Key);
-
-                        // Each item in the groupedByType enumerable is a method to be instrumented
-                        foreach (var toInstrument in groupedByType.OrderBy(x => x.Target.Name))
+                        // Then group by metric
+                        var byMetric = groupedByPriority.GroupBy(x => x.Metric);
+                        foreach (var groupedByMetric in byMetric.OrderBy(x => x.Key))
                         {
-                            ExactMethodMatcher methodMatcher = GetMatcherFromTarget(toInstrument);
-                            match.Matches.Add(methodMatcher);
+                            string metricName = groupedByMetricName.Key == string.Empty ? null : groupedByMetricName.Key;
+                            string name = groupedByName.Key == string.Empty ? null : groupedByName.Key;
+                            string priority = groupedByPriority.Key == string.Empty ? null : groupedByPriority.Key;
+
+                            TracerFactory tracerFactory = new TracerFactory(metricName, name, priority, groupedByMetric.Key);
+
+                            var byType = groupedByMetric.GroupBy(x => x.Target.DeclaringType);
+                            foreach (var groupedByType in byType.OrderBy(x => x.Key.Assembly.FullName).ThenBy(x => x.Key.FullName))
+                            {
+                                Match match = GetMatchFromType(groupedByType.Key);
+
+                                // Each item in the groupedByType enumerable is a method to be instrumented
+                                foreach (var toInstrument in groupedByType.OrderBy(x => x.Target.Name))
+                                {
+                                    ExactMethodMatcher methodMatcher = GetMatcherFromTarget(toInstrument);
+                                    match.Matches.Add(methodMatcher);
+                                }
+
+                                // De-dupe the method matchers, in case we have some parameterless
+                                // entries and some with - as the parameterless ones will take precedence
+                                // anyway, there's no point keeping the others
+                                HashSet<ExactMethodMatcher> toDelete = new HashSet<ExactMethodMatcher>();
+                                foreach (var matcher in match.Matches.Where(x => string.IsNullOrWhiteSpace(x.ParameterTypes)))
+                                {
+                                    toDelete.UnionWith(match.Matches.Where(x => x.MethodName == matcher.MethodName && !string.IsNullOrWhiteSpace(x.ParameterTypes)));
+                                }
+
+                                match.Matches.RemoveAll(x => toDelete.Contains(x));
+
+                                tracerFactory.MatchDefinitions.Add(match);
+                            }
+
+                            toReturn.TracerFactories.Add(tracerFactory);
                         }
-
-                        // De-dupe the method matchers, in case we have some parameterless
-                        // entries and some with - as the parameterless ones will take precedence
-                        // anyway, there's no point keeping the others
-                        HashSet<ExactMethodMatcher> toDelete = new HashSet<ExactMethodMatcher>();
-                        foreach (var matcher in match.Matches.Where(x => string.IsNullOrWhiteSpace(x.ParameterTypes)))
-                        {
-                            toDelete.UnionWith(match.Matches.Where(x => x.MethodName == matcher.MethodName && !string.IsNullOrWhiteSpace(x.ParameterTypes)));
-                        }
-
-                        match.Matches.RemoveAll(x => toDelete.Contains(x));
-
-                        tracerFactory.MatchDefinitions.Add(match);
                     }
-
-                    toReturn.TracerFactories.Add(tracerFactory);
                 }
             }
 

@@ -185,7 +185,7 @@ namespace NRConfigManager.Infrastructure
 
         protected virtual InstrumentationTarget GetInstrumentationTarget(IMethodDetails method, InstrumentAttribute context)
         {
-            return new InstrumentationTarget(method, context.MetricName, context.Metric);
+            return new InstrumentationTarget(method, context.MetricName, context.Name, context.TransactionNamingPriority, context.Metric);
         }
     }
 }

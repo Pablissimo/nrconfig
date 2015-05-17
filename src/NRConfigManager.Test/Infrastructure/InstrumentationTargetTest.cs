@@ -17,10 +17,12 @@ namespace NRConfigManager.Test.Infrastructure
         {
             var methodDetails = new DummyIMethodDetails();
 
-            var target = new InstrumentationTarget(methodDetails, "Metric name", Metric.Scoped);
+            var target = new InstrumentationTarget(methodDetails, "Metric name", "Transaction name", "1", Metric.Scoped);
 
             Assert.AreSame(methodDetails, target.Target);
             Assert.AreEqual("Metric name", target.MetricName);
+            Assert.AreEqual("Transaction name", target.Name);
+            Assert.AreEqual("1", target.TransactionNamingPriority);
             Assert.AreEqual(Metric.Scoped, target.Metric);
         }
 
