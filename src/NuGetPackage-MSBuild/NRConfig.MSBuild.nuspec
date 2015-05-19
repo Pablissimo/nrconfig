@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>NRConfig.MSBuild.New</id>
-    <version>1.4.1.0</version>
+    <version>1.4.2.0</version>
     <authors>Pablissimo,imapi</authors>
     <owners>Pablissimo,imapi</owners>
     <licenseUrl>http://opensource.org/licenses/BSD-3-Clause</licenseUrl>
