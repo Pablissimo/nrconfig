@@ -1,15 +1,15 @@
 ﻿<?xml version="1.0"?>
 <package >
   <metadata>
-    <id>NRConfig.Library</id>
-    <version>1.4.0.0</version>
-    <authors>Pablissimo</authors>
-    <owners>Pablissimo</owners>
+    <id>NRConfig.Library.New</id>
+    <version>1.4.1.0</version>
+    <authors>Pablissimo,imapi</authors>
+    <owners>Pablissimo,imapi</owners>
     <licenseUrl>http://opensource.org/licenses/BSD-3-Clause</licenseUrl>
-    <projectUrl>http://pablissimo.github.com/nrconfig/</projectUrl>
+    <projectUrl>https://github.com/imapi/nrconfig</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Mark up your assemblies, classes or methods using the [Instrument] attribute then run the nrconfig.exe tool (separate NuGet package) to generate a custom New Relic instrumentation XML file.</description>
-    <releaseNotes>Initial release.</releaseNotes>
+    <releaseNotes>Fork with support of transactions</releaseNotes>
     <copyright>Copyright 2013</copyright>
     <tags>NewRelic New Relic Configuration Library</tags>
   </metadata>

@@ -1,21 +1,21 @@
 ﻿<?xml version="1.0"?>
 <package>
   <metadata>
-    <id>NRConfig.MSBuild</id>
-    <version>1.4.0.0</version>
-    <authors>Pablissimo</authors>
-    <owners>Pablissimo</owners>
+    <id>NRConfig.MSBuild.New</id>
+    <version>1.4.1.0</version>
+    <authors>Pablissimo,imapi</authors>
+    <owners>Pablissimo,imapi</owners>
     <licenseUrl>http://opensource.org/licenses/BSD-3-Clause</licenseUrl>
-    <projectUrl>http://pablissimo.github.com/nrconfig/</projectUrl>
+    <projectUrl>https://github.com/imapi/nrconfig</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Generates custom instrumentation configuration files for New Relic - see the project page for more information. Mark up your assemblies, classes and methods to get fine-grained control using the [Instrument] attribute.</description>
-    <releaseNotes>Initial release.</releaseNotes>
+    <releaseNotes>Fork with support of transactions</releaseNotes>
     <copyright>Copyright 2013 Paul O'Neill</copyright>
     <tags>NewRelic New Relic Configuration Tool</tags>
 
     <dependencies>
-      <dependency id="NRConfig.Tool" version="[1.4.0.0]" />
-      <dependency id="NRConfig.Library" version="[1.4.0.0]" />
+      <dependency id="NRConfig.Tool.New" version="[1.4.2.0]" />
+      <dependency id="NRConfig.Library.New" version="[1.4.1.0]" />
     </dependencies>
   </metadata>
 </package>
