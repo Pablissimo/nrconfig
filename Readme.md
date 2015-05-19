@@ -17,6 +17,12 @@ If you want to instrument specific methods or all of the methods within specific
 * Annotate at the assembly, class or method level with the [Instrument] attribute
 * Run nrconfig against the assemblies in question
 
+####[Instrument] attribute
+Available items:
+* Name - name for the tracerFactory (transaction "NewRelic.Agent.Core.Tracer.Factories.BackgroundThreadTracerFactory" and ignore "NewRelic.Agent.Core.Tracer.Factories.IgnoreTransactionTracerFactory")
+* MetricName - name for metric
+* TransactionNamingPriority - priority for transaction naming. Valid values are "1" to "7", where "7" takes precedence over "1" to "6".
+
 ```
 nrconfig /i *.dll
 ```
