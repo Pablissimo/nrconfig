@@ -1,1 +1,8 @@
-
+language: csharp
+solution: ./src/NewRelicConfigManager.sln
+install:
+  - nuget restore ./src/NewRelicConfigManager.sln
+  - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
+script:
+  - xbuild /p:Configuration=Release src/NewRelicConfigManager.sln
+  - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./src/NRConfig.Test/bin/Release/NRConfig.Test.dll ./src/NRConfigManager.Test/bin/Release/NRConfigManager.Test.dll
