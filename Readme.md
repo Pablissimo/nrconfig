@@ -17,15 +17,40 @@ If you want to instrument specific methods or all of the methods within specific
 * Annotate at the assembly, class or method level with the [Instrument] attribute
 * Run nrconfig against the assemblies in question
 
-####[Instrument] attribute
-Available items:
-* Name - name for the tracerFactory (transaction "NewRelic.Agent.Core.Tracer.Factories.BackgroundThreadTracerFactory" and ignore "NewRelic.Agent.Core.Tracer.Factories.IgnoreTransactionTracerFactory")
-* MetricName - name for metric
-* TransactionNamingPriority - priority for transaction naming. Valid values are "1" to "7", where "7" takes precedence over "1" to "6".
-
 ```
 nrconfig /i *.dll
 ```
+
+####[Instrument] attribute
+You can apply the Instrument attribute at the assembly, class or method/property level. You need not supply any parameters, though you can configure the output of the tool by optionally setting:
+
+* **InstrumentationScopes** - a combination of flags that determines what targets should be considered or rejected at the level of the [Instrument] attribute and below
+    - **None** - nothing from this point onwards should be instrumented
+    - **PublicProperties**
+    - **NonPublicProperties**
+    - **Properties** - all property accessor methods should be instrumented irrespective of visibility (equivalent to specifying both PublicProperties | NonPublicProperties)
+    - **PublicMethods**
+    - **NonPublicMethods**
+    - **Methods** - all methods should be instrumented irrespective of visibility (equivalent to PublicMethods | NonPublicMethods)
+    - **PublicConstructors**
+    - **NonPublicConstructors**
+    - **Constructors** - all constructors should be instrumented irrespective of visibility (equivalent to PublicConstructors | NonPublicConstructors)
+    - **All** - every method, property accessor method and constructor should be instrumented (equivalent to Properties | Methods | Constructors)
+* **Name** - the name of the tracerFactory; for example "NewRelic.Agent.Core.Tracer.Factories.BackgroundThreadTracerFactory", or "NewRelic.Agent.Core.Tracer.Factories.IgnoreTransactionTracerFactory"
+* **MetricName** - the name of the metric
+* **TransactionNamingPriority** - priority for transaction naming, which can be in the range "1" to "7" (with "7" being highest-priority)
+* **IncludeCompilerGeneratedCode** - determines whether classes and methods marked with the [CompilerGenerated] attribute should be instrumented or excuded
+Available items:
+* **Name** - name for the tracerFactory (transaction "NewRelic.Agent.Core.Tracer.Factories.BackgroundThreadTracerFactory" and ignore "NewRelic.Agent.Core.Tracer.Factories.IgnoreTransactionTracerFactory")
+* **MetricName** - name for metric
+* **TransactionNamingPriority** - priority for transaction naming. Valid values are "1" to "7", where "7" takes precedence over "1" to "6".
+
+The actual settings used when considering any given method for inclusion are a combination of the settings specified using [Instrument] attributes at the method, class and assembly levels.
+
+* If you specify a setting at two levels, the one at the lower level takes precedence
+    - e.g. Specifying InstrumentationScopes="All" at the class level, then InstrumentationScopes="None" on a method within that class will exclude that one method from instrumentation
+* If you do not specify a particular value for a setting at a lower level but do at a higher level, the higher level value is inherited
+    - e.g. Specifying Name at an assembly level, but not specifying it at the class level will cause methods within the class to be instrumented using the factory named at the assembly level
 
 ###Generate instrumentation files for unadorned assemblies, including the BCL
 If you can't or don't want to change your code, or want to quickly get a baseline instrumentation configuration file that you can then tweak manually then you can use the /f flag.

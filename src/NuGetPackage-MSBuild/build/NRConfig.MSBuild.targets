@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <UsingTask AssemblyFile="..\..\NRConfig.Tool.New.1.4.2.0\tools\nrconfig.exe" TaskName="NewRelicCustomInstrumentationFileTask" />
-  <UsingTask AssemblyFile="..\..\NRConfig.Tool.New.1.4.2.0\tools\nrconfig.exe" TaskName="NewRelicCustomInstrumentationFileMergeTask" />
+  <UsingTask AssemblyFile="..\..\NRConfig.Tool.1.5.0.0\tools\nrconfig.exe" TaskName="NewRelicCustomInstrumentationFileTask" />
+  <UsingTask AssemblyFile="..\..\NRConfig.Tool.1.5.0.0\tools\nrconfig.exe" TaskName="NewRelicCustomInstrumentationFileMergeTask" />
 
   <Target Name="GenerateNewRelicCustomInstrumentationFile" BeforeTargets="GetCopyToOutputDirectoryItems">
     <Message Text="Generating New Relic files" Importance="high" />

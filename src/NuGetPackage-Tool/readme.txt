@@ -13,7 +13,7 @@ If you're going the manual route, the following post-build will
 process the target assembly and output a configuration file with its name 
 suffixed with '.NewRelic.xml':
 
-$(SolutionDir)packages\NRConfig.Tool.New.1.4.2.0\tools\nrconfig.exe /f all /i $(TargetPath) /o $(TargetDir)$(TargetName).NewRelic.xml
+$(SolutionDir)packages\NRConfig.Tool.1.5.0.0\tools\nrconfig.exe /f all /i $(TargetPath) /o $(TargetDir)$(TargetName).NewRelic.xml
 
 It will add every public method, constructor and property accessor to your
 instrumentation file - you can modify this by changing the value of the /f
@@ -28,4 +28,4 @@ up being instrumented.
 If you mark up your assembly in this way, remove the /f from the post-build
 step command:
 
-$(SolutionDir)packages\NRConfig.Tool.New.1.4.2.0\tools\nrconfig.exe /i $(TargetPath) /o $(TargetDir)$(TargetName).NewRelic.xml
+$(SolutionDir)packages\NRConfig.Tool.1.5.0.0\tools\nrconfig.exe /i $(TargetPath) /o $(TargetDir)$(TargetName).NewRelic.xml
