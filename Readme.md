@@ -52,7 +52,7 @@ The actual settings used when considering any given method for inclusion are a c
 * If you do not specify a particular value for a setting at a lower level but do at a higher level, the higher level value is inherited
     - e.g. Specifying Name at an assembly level, but not specifying it at the class level will cause methods within the class to be instrumented using the factory named at the assembly level
 
-###Generate instrumentation files for unadorned assemblies, including the BCL
+### Generate instrumentation files for unadorned assemblies, including the BCL
 If you can't or don't want to change your code, or want to quickly get a baseline instrumentation configuration file that you can then tweak manually then you can use the /f flag.
 
 ```
