@@ -78,7 +78,7 @@ while to instrument all methods, whether public or private:
 nrconfig /i MyAssembly.dll /f methods+-
 ````
 
-###Merge multiple configuration files
+### Merge multiple configuration files
 The filter format is pretty basic, and you might want to use different filters for different assemblies. You can do that by running nrconfig multiple times with different output files specified, then merge them with the /m flag:
 
 ````
