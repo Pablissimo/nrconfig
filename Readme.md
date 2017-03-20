@@ -3,14 +3,14 @@ nrconfig
 
 Tool to automate generation of New Relic custom instrumentation XML files for .NET projects
 
-##Overview
+## Overview
 nrconfig is a command-line tool intended to support creating and maintaining [custom instrumentation](https://newrelic.com/docs/dotnet/CustomInstrumentation.html) files for use by New Relic.
 
 **Note** I'm not affiliated with New Relic, Inc beyond being a happy customer of theirs and this tool is in no way endorsed by them. If there're issues with the tool or questions about the source, come to me and not their (lovely) support team as they'll not know what you're talking about.
 
-##Usage
+## Usage
 
-###Mark up your methods for fine-grained control
+### Mark up your methods for fine-grained control
 If you want to instrument specific methods or all of the methods within specific classes then the best approach is to mark them up with Instrument attributes.
 
 * Install the nrconfig NuGet package into the projects you wish to instrument
@@ -21,7 +21,7 @@ If you want to instrument specific methods or all of the methods within specific
 nrconfig /i *.dll
 ```
 
-####[Instrument] attribute
+#### [Instrument] attribute
 You can apply the Instrument attribute at the assembly, class or method/property level. You need not supply any parameters, though you can configure the output of the tool by optionally setting:
 
 * **InstrumentationScopes** - a combination of flags that determines what targets should be considered or rejected at the level of the [Instrument] attribute and below
@@ -91,7 +91,7 @@ REM Merge the two files
 nrconfig /m /i *.NewRelic.xml /o MergedInstrumentation.xml
 ````
 
-###Options
+### Options
 
 #### /i &lt;file_1&gt; [file_2] ... [file_n]
 Specifies the input files to be processed. These can either be specific paths, include wildcard strings in the filename portion or include environment variables.
@@ -126,7 +126,7 @@ Verbose mode, shows a little more diagnostic information during the run.
 #### /debug 
 Extra-verbose mode, generates a lot of console output but useful if you're about to report a bug.
 
-##Licence
+## Licence
 nrconfig is licensed under the [BSD 2-Clause Licence](http://opensource.org/licenses/BSD-2-Clause):
 
 Copyright (c) 2013, Paul O'Neill, pablissimo.com
